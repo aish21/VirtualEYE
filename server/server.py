@@ -1,29 +1,21 @@
-import eventlet
-import socketio
+import asyncio
+import websockets
 
+# create handler for each connection
+ 
+async def handler(websocket, path):
 
-sio = socketio.Server()
-app = socketio.WSGIApp(sio, static_files={
-    '/': {'content_type': 'text/html', 'filename': 'index.html'}
-})
+    print('here')
+ 
+    data = await websocket.recv()
 
-
-@sio.event
-def connect(sid, environ):
-    print('connect ', sid)
-    my_message(sid, {'Test': 'Message'})
-
-
-@sio.event
-def my_message(sid, data):
-    sio.send(data)
-    print('Send message ', data)
-
-
-@sio.event
-def disconnect(sid):
-    print('disconnect ', sid)
-
-
-if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
+    print('here2')
+ 
+    reply = f"Data recieved as:  {data}!"
+ 
+    await websocket.send(reply)
+ 
+start_server = websockets.serve(handler, "localhost", 8080)
+ 
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
