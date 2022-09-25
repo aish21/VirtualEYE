@@ -4,11 +4,11 @@ from imageai.Detection import ObjectDetection
 
 detector = ObjectDetection()
 
-model_path = "./models/yolo-tiny.h5"
+model_path = "./models/resnet.h5"
 input_path = "./input/test2.jpeg"
-output_path = "./output/newimage3.jpg"
+output_path = "./output/newimage_resnet.jpg"
 
-detector.setModelTypeAsTinyYOLOv3()
+detector.setModelTypeAsRetinaNet()
 detector.setModelPath(model_path)
 detector.loadModel()
 
