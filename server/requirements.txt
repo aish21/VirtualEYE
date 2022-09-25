@@ -9,5 +9,4 @@ matplotlib==3.3.2
 opencv-python
 keras-resnet==0.2.0
 tensorflow==2.4.0
-tensorflow-gpu==2.4.0
 imageai
