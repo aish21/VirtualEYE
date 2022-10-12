@@ -8,7 +8,7 @@ detector = ObjectDetection()
 
 model_path = "./models/yolo.h5"
 # input_path = "./input/test2.jpeg"
-output_path = "./output/speed_yolo_5.jpg"
+output_path = "./output/np_arr.jpg"
 
 img = Image.open('./input/test2.jpeg')
 numpydata = asarray(img)
