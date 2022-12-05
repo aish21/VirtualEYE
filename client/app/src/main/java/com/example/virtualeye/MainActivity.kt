@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity() {
             mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
 
             mScanCallback = initCallbacks()
-            println(mScanCallback.toString())
-            println("mScanCallback")
+            //println(mScanCallback.toString())
+            //println("mScanCallback")
 
             mBluetoothLeScanner?.startScan(mScanCallback)
 
@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCallbacks(): ScanCallback {
+        val name1 = "FCL Beacon1"
+        val name2 = "FWM8BLZ02"
         return object : ScanCallback() {
             @SuppressLint("MissingPermission")
             override fun onScanResult(
@@ -50,15 +52,16 @@ class MainActivity : AppCompatActivity() {
                 super.onScanResult(callbackType, result)
 
                 if (result.device != null) {
-                    //addDevice(result.getDevice(), result.getRssi());
-//                    if(result.device.name == "FWM8BLZ02"){
-                        println(result.device.name)
-                        println(result.device)
-                        println(result.rssi)
-                        println(" ")
-                        println(" ")
-
-//                    }
+                    if(result.device.name != null) {
+                        //addDevice(result.getDevice(), result.getRssi());
+                        if(result.device.name.equals(name1) or result.device.name.equals(name2)) {
+                            println(result.device.name)
+                            println(result.device)
+                            println(result.rssi)
+                            println(" ")
+                            println(" ")
+                        }
+                    }
                 }
                 return
             }
