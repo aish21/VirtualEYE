@@ -8,8 +8,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.util.Log
+import android.util.Log.INFO
 import android.widget.Button
 import android.widget.Toast
+
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
@@ -55,11 +58,12 @@ class MainActivity : AppCompatActivity() {
                     if(result.device.name != null) {
                         //addDevice(result.getDevice(), result.getRssi());
                         if(result.device.name.equals(name1) or result.device.name.equals(name2)) {
-                            println(result.device.name)
-                            println(result.device)
-                            println(result.rssi)
-                            println(" ")
-                            println(" ")
+                            Log.i("BLE NAME: ", result.device.name)
+                            //println(result.device.name)
+                            Log.i("BLE MAC: ", result.device.toString())
+                            //println(result.device)
+                            Log.i("BLE RSSI: ", result.rssi.toString())
+                            //println(result.rssi)
                         }
                     }
                 }
