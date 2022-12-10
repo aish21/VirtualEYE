@@ -6,23 +6,60 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/startScanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Scan"
+    <LinearLayout
+        android:id="@+id/elements"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#EAFFD0"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/btInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/startScanButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/virtual_eye_logo"
+            android:layout_width="match_parent"
+            android:layout_height="272dp"
+            app:srcCompat="@drawable/eye"
+            android:contentDescription="@string/app_logo_desc" />
+
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pompiere"
+            android:text="@string/app_title"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="#000000"
+            android:textSize="90sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="80dp" />
+
+        <ImageButton
+            android:id="@+id/regular_nav_bt"
+            android:layout_width="280dp"
+            android:layout_height="80dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/regular_nav_bt"
+            android:contentDescription="@string/navigate_to_regular_navigation" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
+        <ImageButton
+            android:id="@+id/asst_nav_bt"
+            android:layout_width="280dp"
+            android:layout_height="80dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/asst_nav_bt"
+            android:contentDescription="@string/navigate_to_assisted_navigation" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
