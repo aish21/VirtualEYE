@@ -41,7 +41,7 @@
             android:layout_height="80dp" />
 
         <ImageButton
-            android:id="@+id/regular_nav_bt"
+            android:id="@+id/regular_navigation_bt"
             android:layout_width="280dp"
             android:layout_height="80dp"
             android:background="#00FFFFFF"
