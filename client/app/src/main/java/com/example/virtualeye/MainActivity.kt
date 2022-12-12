@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Hide Action Bar - For UI purpose
         supportActionBar?.hide()
 
+        tts = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                tts.speak("Hello, welcome to Virtual Eye! Please shake the phone to start assisted navigation.", TextToSpeech.QUEUE_ADD, null, null)
+            }
+        })
+
         // Init Sensor Manager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
@@ -42,13 +48,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val intent_assisted_nav_bt = Intent(this, AssistedNavigation::class.java)
             startActivity(intent_assisted_nav_bt)
         }
-
-        tts = TextToSpeech(this, TextToSpeech.OnInitListener {
-            if (it == TextToSpeech.SUCCESS) {
-                tts.speak("Hello, welcome to Virtual Eye! Please shake the phone to start assisted navigation.", TextToSpeech.QUEUE_ADD, null, null)
-            }
-        })
-
     }
 
     // Sensor change functions
