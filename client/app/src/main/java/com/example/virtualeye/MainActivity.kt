@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         tts = TextToSpeech(this, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
+                tts.setSpeechRate(0.5f)
                 tts.speak("Hello, welcome to Virtual Eye! Please shake the phone to start assisted navigation.", TextToSpeech.QUEUE_ADD, null, null)
             }
         })
