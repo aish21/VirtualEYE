@@ -10,7 +10,9 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import kotlin.math.pow
 
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
@@ -23,6 +25,7 @@ class RegularNavigation : AppCompatActivity() {
         setContentView(R.layout.regular_navigation)
 
         val button = findViewById<Button>(R.id.startScanButton)
+
         button.setOnClickListener {
             val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
@@ -45,8 +48,11 @@ class RegularNavigation : AppCompatActivity() {
     private fun initCallbacks(): ScanCallback {
         val name1 = "FCL Beacon1"
         val name2 = "FWM8BLZ02"
+        val myRes = findViewById<TextView>(R.id.myEqn)
+        val notMyRes = findViewById<TextView>(R.id.researchedEqn)
+
         return object : ScanCallback() {
-            @SuppressLint("MissingPermission")
+            @SuppressLint("MissingPermission", "NewApi")
             override fun onScanResult(
                 callbackType: Int,
                 result: ScanResult
@@ -63,6 +69,12 @@ class RegularNavigation : AppCompatActivity() {
                             //println(result.device)
                             Log.i("BLE RSSI: ", result.rssi.toString())
                             //println(result.rssi)
+
+                            val calcMyRes = (-0.113 * result.rssi.toFloat())  - 61.1
+                            val calcNotMyRes = 10.0.pow((((-77.3 - result.rssi.toFloat()) / (10 * 2))))
+
+                            myRes.text = calcMyRes.toString()
+                            notMyRes.text = calcNotMyRes.toString()
                         }
                     }
                 }
