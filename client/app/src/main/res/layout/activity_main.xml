@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#EAFFD0"
-        android:gravity="center_horizontal"
+        android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,8 +22,8 @@
             android:id="@+id/virtual_eye_logo"
             android:layout_width="match_parent"
             android:layout_height="272dp"
-            app:srcCompat="@drawable/eye"
-            android:contentDescription="@string/app_logo_desc" />
+            android:contentDescription="@string/app_logo_desc"
+            app:srcCompat="@drawable/eye" />
 
         <TextView
             android:id="@+id/app_title"
@@ -42,11 +42,11 @@
 
         <ImageButton
             android:id="@+id/regular_navigation_bt"
-            android:layout_width="280dp"
-            android:layout_height="80dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/regular_nav_bt"
-            android:contentDescription="@string/navigate_to_regular_navigation" />
+            android:contentDescription="@string/navigate_to_regular_navigation"
+            app:srcCompat="@drawable/regular_nav_bt" />
 
         <Space
             android:layout_width="match_parent"
@@ -54,11 +54,11 @@
 
         <ImageButton
             android:id="@+id/asst_nav_bt"
-            android:layout_width="280dp"
-            android:layout_height="80dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/asst_nav_bt"
-            android:contentDescription="@string/navigate_to_assisted_navigation" />
+            android:contentDescription="@string/navigate_to_assisted_navigation"
+            app:srcCompat="@drawable/asst_nav_bt" />
 
     </LinearLayout>
 

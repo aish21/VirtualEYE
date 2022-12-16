@@ -1,0 +1,181 @@
+from flask import Flask
+from flask import request
+from multiprocessing import Process, Queue
+
+# Globals
+clientName = ''
+numClients = 0
+clientQueue = []
+clientExists = False
+indexOfExistingClient = 0
+
+app = Flask(__name__)
+
+def cName():
+    # http://127.0.0.1:5000/redirect_requests?language=Python
+    return request.args.get('imeiNum')
+
+def readCReq(queue):
+    # Function to read the client request from the queue, spawns a separate process.
+    while True:
+        cReq = queue.get()
+        if cReq == 'DONE':
+            break
+    
+def addCReq()
+
+
+
+
+@app.route("/redirect_requests")
+def redirect_requests():
+
+    clientName = cName()
+
+    for i in range(len(clientQueue)):
+        if(clientQueue[i] == clientName):
+            clientExists = True
+            indexOfExistingClient = i
+    
+    # If client already exists in queue, remove it from the queue and add it at the back again
+    if clientExists:
+        clientQueue.pop(indexOfExistingClient)
+        clientQueue.append(clientName)
+    else:
+        # If client does not exist, add it to the queue
+        clientQueue.append(clientName)
+        numClients = len(clientQueue)
+    
+    # Queue has clients waiting
+    if numClients != 0:
+        for j in range(numClients):
+            if numClients <= 10:
+                # check if VM is running
+                # check num of cl
+            else:
+                # create a new VM
+            clientQueue.pop(j)
+    
+    return '''<h1>The value is: {}</h1>'''.format(language)
+
+
+# Flask imports
+from distutils.log import debug
+from flask import Flask
+from flask import request
+from flask_caching import Cache
+
+# Azure Imports
+import adal
+import requests
+
+# To be later stored in env file
+# Tenant ID
+TENANT_ID = '5ef97fc2-9f71-4435-a705-3c9ee58a52f8'
+
+# Client ID
+CLIENT = '17b8c581-f781-42d4-8c30-c0dbdd86d166'
+
+# Client Secret
+KEY = 'QsO8Q~eo7vlb_qtB33jETqAs8f1X5oBj6w8-Ocjj'
+
+# Subscription ID
+subscription_id = '9568b8d1-2087-47d1-b8ed-0baa6969f187'
+
+# Globals
+clientNames = []
+numClients = 0
+
+app = Flask(__name__)
+app.config['CACHE_TYPE'] = 'SimpleCache' 
+cache = Cache(app)
+
+def startSecondVM():
+    authority_url = 'https://login.microsoftonline.com/'+TENANT_ID
+    context = adal.AuthenticationContext(authority_url)
+    token = context.acquire_token_with_client_credentials(
+        resource='https://management.azure.com/',
+        client_id=CLIENT,
+        client_secret=KEY
+    )
+
+    print(token["accessToken"])
+    authStr = "bearer " + token["accessToken"]
+
+    headers  = {"Authorization": authStr,
+                "Content-Type": "application/json"}
+
+    resp = requests.post("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost2/start?api-version=2022-03-01", headers= headers)
+    return str(resp.status_code)
+    
+    # Run a bash script to start the VPS server
+
+# @app.before_first_request
+# def startDefaultVM():
+#     # POST https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/start?api-version=2022-03-01
+#     authority_url = 'https://login.microsoftonline.com/'+TENANT_ID
+#     context = adal.AuthenticationContext(authority_url)
+#     token = context.acquire_token_with_client_credentials(
+#         resource='https://management.azure.com/',
+#         client_id=CLIENT,
+#         client_secret=KEY
+#     )
+
+#     print(token["accessToken"])
+#     authStr = "bearer " + token["accessToken"]
+
+#     headers  = {"Authorization": authStr,
+#                 "Content-Type": "application/json"}
+
+#     resp = requests.post("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/start?api-version=2022-03-01", headers= headers)
+#     print(str(resp.status_code))
+
+#     # Run a bash script on the VM (to start the VPS server)
+
+@app.route("/")
+def clientConnected():
+    
+    VM1 = "20.192.9.118"
+    VM2 = "20.235.80.246"
+    
+    numClients = cache.get("num")
+    
+    if numClients == None:
+        cache.set("num", 1)
+    else:
+        cache.set("num", 2)
+    
+    # clientName = request.args.get('imeiNum')
+    # cache.set(clientName, clientName)
+
+    if numClients == 1:
+        # startSecondVM()
+        return VM1
+    elif numClients == 2:
+        return VM2
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+# Run a bash script on the VM (to start the VPS server)
+
+    # startServerC = requests.put("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/runCommands/startVPS?api-version=2022-03-01",
+    #                             json={
+    #                                 "location": "Central India",
+    #                                 "properties": {
+    #                                     "source": {
+    #                                         "script": "docker run --network=host -it b86 /bin/bash -c 'tmuxinator'"
+    #                                     },
+    #                                     "timeoutInSeconds": 240
+    #                                 }
+    #                             }, 
+    #                             headers=headers)
+    # print(str(startServerC.content))
+
+    getCMD = requests.get("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/runCommands/startVPS?api-version=2022-03-01", headers=headers)
+    print(str(getCMD.content))
+
+    startServer = requests.post("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/runCommand?api-version=2022-03-01",
+                                json={"commandId": "startVPS"}, 
+                                headers=headers)
+    print(str(startServer.content))
