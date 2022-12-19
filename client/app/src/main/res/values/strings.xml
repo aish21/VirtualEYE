@@ -4,4 +4,7 @@
     <string name="navigate_to_regular_navigation">Navigate to Regular Navigation</string>
     <string name="app_logo_desc">app_logo</string>
     <string name="navigate_to_assisted_navigation">Navigate to Assisted Navigation</string>
+    <string name="dest_prompt">Select Destination</string>
+    <string name="start_point_prompt">Select Start Point</string>
+    <string name="dir_bt">Get Directions Button</string>
 </resources>

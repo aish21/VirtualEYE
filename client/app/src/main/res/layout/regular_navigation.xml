@@ -3,45 +3,75 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
 
-    <Button
-        android:id="@+id/startScanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SCAN"
-        app:layout_constraintBottom_toTopOf="@+id/researchedEqn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/myEqn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
-        android:layout_marginTop="188dp"
-        android:layout_marginEnd="195dp"
-        android:layout_marginBottom="524dp"
-        android:textColor="#000000"
-        android:textSize="34sp"
+    <LinearLayout
+        android:id="@+id/elements_reg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00EAFFD0"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.81"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/researchedEqn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startScanButton" />
+        <LinearLayout
+            android:id="@+id/dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_rect"
+            android:padding="16dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <Spinner
+                android:id="@+id/start_point"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/start_point_prompt"
+                android:foreground="@drawable/start_drp"
+                android:minHeight="48dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="23dp" />
+
+            <Spinner
+                android:id="@+id/destination"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/dest_prompt"
+                android:foreground="@drawable/dest_drp"
+                android:minHeight="48dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="23dp" />
+
+            <ImageButton
+                android:id="@+id/startScanButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/dir_bt"
+                app:srcCompat="@drawable/dir_bt" />
+
+        </LinearLayout>
+
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
