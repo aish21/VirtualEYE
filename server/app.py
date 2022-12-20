@@ -6,66 +6,17 @@ from flask import request
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
 import time
-
-# Azure Imports
-import adal
 import requests
-
-'''
-1 - E4:7E:DB:B2:0D:3C
-2 - E3:2D:87:49:E5:BF
-3 - CF:BD:6D:B7:8E:7D
-4 - D8:3F:BB:F5:EF:5E
-5 - F1:C6:5F:C8:71:9D
-6 - D6:65:D2:8F:C5:8F
-7 - E9:4E:48:02:C6:84
-8 - CF:99:D4:6A:7A:75
-'''
 
 # Module Imports
 import modules.editDBdata as editDBdata
-import modules.createVM as createVM
-
-# Parameters required for authorization and making requests to Azure REST API
-# Tenant ID
-TENANT_ID = '5ef97fc2-9f71-4435-a705-3c9ee58a52f8'
-
-# Client ID
-CLIENT = '17b8c581-f781-42d4-8c30-c0dbdd86d166'
-
-# Client Secret
-KEY = 'QsO8Q~eo7vlb_qtB33jETqAs8f1X5oBj6w8-Ocjj'
-
-# Subscription ID
-subscription_id = '9568b8d1-2087-47d1-b8ed-0baa6969f187'
+import modules.pathCalc as pathCalc
 
 # Globals
 databaseFile = r'db/client_server_data.db' 
 vmCapList = []
 
 app = Flask(__name__)
-vm2Started = False
-@app.before_first_request
-def startDefaultVM():
-    ''' Function is called when the Load Balancing Server starts up - always have the default VM running '''
-
-    # POST https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/start?api-version=2022-03-01
-    authority_url = 'https://login.microsoftonline.com/'+TENANT_ID
-    context = adal.AuthenticationContext(authority_url)
-    token = context.acquire_token_with_client_credentials(
-        resource='https://management.azure.com/',
-        client_id=CLIENT,
-        client_secret=KEY
-    )
-
-    print(token["accessToken"])
-    authStr = "bearer " + token["accessToken"]
-
-    headers  = {"Authorization": authStr,
-                "Content-Type": "application/json"}
-
-    resp = requests.post("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost/start?api-version=2022-03-01", headers= headers)
-    print(str(resp.status_code))
 
 @app.route('/clientConnected', methods=['GET', 'POST'])
 def process1():
@@ -214,7 +165,7 @@ def process5():
             if(vm not in vmCapList):
                 print('here')
                 vmCapList.append(vm)
-                newVM = createVM.createVirtualMachine()
+                newVM = pathCalc.createVirtualMachine()
                 time.sleep(30)
                 status = editDBdata.create_server(conn, newVM)
         

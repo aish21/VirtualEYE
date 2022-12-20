@@ -10,7 +10,7 @@
         android:id="@+id/elements_reg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00EAFFD0"
+        android:background="#FCE38A"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,9 +23,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_rect"
-            android:padding="16dp"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="23dp" />
+                android:layout_height="27dp" />
 
             <ImageButton
                 android:id="@+id/startScanButton"
@@ -70,7 +70,7 @@
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

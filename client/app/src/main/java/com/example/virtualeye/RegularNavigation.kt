@@ -1,6 +1,5 @@
 package com.example.virtualeye
 
-import android.R.id
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
@@ -9,8 +8,7 @@ import android.bluetooth.le.ScanResult
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -19,15 +17,65 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
 
+@Suppress("DEPRECATION")
 class RegularNavigation : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.regular_navigation)
 
+        val spinner_start: Spinner = findViewById(R.id.start_point)
+        val spinner_dest: Spinner = findViewById(R.id.destination)
+
+        val start_loc = listOf("Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+                                "SCSE Student Lounge",
+                                "Software Lab 1",
+                                "Hardware Lab 1",
+                                "The Open House",
+                                "Hardware Lab 2",
+                                "Software Lab 2",
+                                "Hardware and Project Lab")
+
+        val dest_loc = listOf("Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+                                "SCSE Student Lounge",
+                                "Software Lab 1",
+                                "Hardware Lab 1",
+                                "The Open House",
+                                "Hardware Lab 2",
+                                "Software Lab 2",
+                                "Hardware and Project Lab")
+
         val button = findViewById<ImageButton>(R.id.startScanButton)
         val imageView = findViewById<View>(R.id.imageView) as SubsamplingScaleImageView
-        imageView.setImage(ImageSource.resource(R.drawable.scse_1_final));
+        imageView.setImage(ImageSource.resource(R.drawable.scse_1_final))
+
+        val adapter_start = ArrayAdapter(this, android.R.layout.simple_spinner_item, start_loc)
+        val adapter_dest = ArrayAdapter(this, android.R.layout.simple_spinner_item, dest_loc)
+        spinner_start.adapter = adapter_start
+        spinner_dest.adapter = adapter_dest
+        adapter_start.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter_dest.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner_start.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                // Do something when an item is selected
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do something when no item is selected
+            }
+        }
+
+        spinner_dest.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                // Do something when an item is selected
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do something when no item is selected
+            }
+        }
+
 
         button.setOnClickListener {
             val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()

@@ -1,4 +1,4 @@
-''' Python Script to create an SQL database for the load balancing server '''
+''' Python Script to create an SQL database for the server '''
 
 import sqlite3
 from sqlite3 import Error
@@ -22,4 +22,4 @@ def create_connection(db_file):
 if __name__ == '__main__':
 
     # Change file name to create different databases
-    create_connection(r"/home/gv/Desktop/VPS_DEMO/vps-load-balancing-server/db/client_server_data.db")
+    create_connection(r"C:/Users/Aishwarya Singh/Desktop/Final_Year_Project/FYP/server/db/loc_path_data.db")
