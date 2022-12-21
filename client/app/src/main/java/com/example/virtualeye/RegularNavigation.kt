@@ -31,19 +31,17 @@ class RegularNavigation : AppCompatActivity() {
                                 "SCSE Student Lounge",
                                 "Software Lab 1",
                                 "Hardware Lab 1",
-                                "The Open House",
                                 "Hardware Lab 2",
                                 "Software Lab 2",
-                                "Hardware and Project Lab")
+                                "Hardware Projects Lab")
 
         val dest_loc = listOf("Cybercrime Analysis & Research Alliance @ NTU (CARA)",
                                 "SCSE Student Lounge",
                                 "Software Lab 1",
                                 "Hardware Lab 1",
-                                "The Open House",
                                 "Hardware Lab 2",
                                 "Software Lab 2",
-                                "Hardware and Project Lab")
+                                "Hardware Projects Lab")
 
         val button = findViewById<ImageButton>(R.id.startScanButton)
         val imageView = findViewById<View>(R.id.imageView) as SubsamplingScaleImageView
