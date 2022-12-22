@@ -16,6 +16,8 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
+var selectedStart: String? = null
+var selectedDest: String? = null
 
 @Suppress("DEPRECATION")
 class RegularNavigation : AppCompatActivity() {
@@ -27,19 +29,21 @@ class RegularNavigation : AppCompatActivity() {
         val spinner_start: Spinner = findViewById(R.id.start_point)
         val spinner_dest: Spinner = findViewById(R.id.destination)
 
-        val start_loc = listOf("Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+        val start_loc = listOf("NULL",
+                                "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
                                 "SCSE Student Lounge",
-                                "Software Lab 1",
                                 "Hardware Lab 1",
                                 "Hardware Lab 2",
+                                "Software Lab 1",
                                 "Software Lab 2",
                                 "Hardware Projects Lab")
 
-        val dest_loc = listOf("Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+        val dest_loc = listOf("NULL",
+                                "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
                                 "SCSE Student Lounge",
-                                "Software Lab 1",
                                 "Hardware Lab 1",
                                 "Hardware Lab 2",
+                                "Software Lab 1",
                                 "Software Lab 2",
                                 "Hardware Projects Lab")
 
@@ -55,8 +59,35 @@ class RegularNavigation : AppCompatActivity() {
         adapter_dest.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         spinner_start.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 // Do something when an item is selected
+                selectedStart = parent.getItemAtPosition(position).toString()
+
+                when (selectedStart) {
+                    "NULL" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.start_drp)
+                    }
+                    "Cybercrime Analysis & Research Alliance @ NTU (CARA)" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.cara_drp)
+                    }
+                    "SCSE Student Lounge" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.lounge_drp)
+                    }
+                    "Hardware Lab 1" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.hw1_drp)
+                    }
+                    "Hardware Lab 2" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.hw2_drp)
+                    }
+                    "Software Lab 1" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.sw1_drp)
+                    }
+                    "Software Lab 2" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.sw2_drp)
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -65,8 +96,34 @@ class RegularNavigation : AppCompatActivity() {
         }
 
         spinner_dest.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 // Do something when an item is selected
+                selectedDest = parent.getItemAtPosition(position).toString()
+
+                when (selectedDest) {
+                    "NULL" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.dest_drp)
+                    }
+                    "Cybercrime Analysis & Research Alliance @ NTU (CARA)" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.cara_drp)
+                    }
+                    "SCSE Student Lounge" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.lounge_drp)
+                    }
+                    "Hardware Lab 1" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.hw1_drp)
+                    }
+                    "Hardware Lab 2" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.hw2_drp)
+                    }
+                    "Software Lab 1" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.sw1_drp)
+                    }
+                    "Software Lab 2" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.sw2_drp)
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -74,8 +131,181 @@ class RegularNavigation : AppCompatActivity() {
             }
         }
 
-
         button.setOnClickListener {
+
+            // Change map based on selected values in drop down
+            if(selectedStart != "NULL" && selectedDest != "NULL"){
+
+                // CARA -> Dest
+                if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_lounge))
+                }
+                else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hw1))
+                }
+                else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hw2))
+                }
+                else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                }
+                else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_sw2))
+                }
+                else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hwproj))
+                }
+
+                // SCSE Student Lounge -> Dest
+                if(selectedStart == "SCSE Student Lounge" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_lounge))
+                }
+                else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_lounge))
+                }
+                else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_lounge))
+                }
+                else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                }
+                else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_sw2))
+                }
+                else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_hwproj))
+                }
+
+                // Software Lab 1 -> Dest
+                if(selectedStart == "Software Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                }
+
+                // Hardware Lab 1 -> Dest
+                if(selectedStart == "Hardware Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hw1))
+                }
+                else if(selectedStart == "Hardware Lab 1" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_lounge))
+                }
+                else if(selectedStart == "Hardware Lab 1" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_hw2))
+                }
+                else if(selectedStart == "Hardware Lab 1" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                }
+                else if(selectedStart == "Hardware Lab 1" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_sw2))
+                }
+                else if(selectedStart == "Hardware Lab 1" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_hwproj))
+                }
+
+                // Hardware Lab 2 -> Dest
+                if(selectedStart == "Hardware Lab 2" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hw2))
+                }
+                else if(selectedStart == "Hardware Lab 2" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_lounge))
+                }
+                else if(selectedStart == "Hardware Lab 2" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_hw2))
+                }
+                else if(selectedStart == "Hardware Lab 2" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                }
+                else if(selectedStart == "Hardware Lab 2" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_sw2))
+                }
+                else if(selectedStart == "Hardware Lab 2" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_hwproj))
+                }
+
+                // Software Lab 1 -> Dest
+                if(selectedStart == "Software Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                }
+                else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                }
+
+                // Software Lab 2 -> Dest
+                if(selectedStart == "Software Lab 2" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_sw2))
+                }
+                else if(selectedStart == "Software Lab 2" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_sw2))
+                }
+                else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_sw2))
+                }
+                else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_sw2))
+                }
+                else if(selectedStart == "Software Lab 2" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                }
+                else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Projects Lab"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw2_hwproj))
+                }
+
+                // Hardware Projects Lab -> Dest
+                if(selectedStart == "Hardware Projects Lab" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
+                    imageView.setImage(ImageSource.resource(R.drawable.cara_hwproj))
+                }
+                else if(selectedStart == "Hardware Projects Lab" && selectedDest == "SCSE Student Lounge"){
+                    imageView.setImage(ImageSource.resource(R.drawable.lounge_hwproj))
+                }
+                else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Hardware Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw1_hwproj))
+                }
+                else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Hardware Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.hw2_hwproj))
+                }
+                else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Software Lab 1"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                }
+                else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Software Lab 2"){
+                    imageView.setImage(ImageSource.resource(R.drawable.sw2_hwproj))
+                }
+            }
+            else{
+                if(selectedStart == selectedDest){
+                    Toast.makeText(this, "Start and Destination cannot be the same location, try again!", Toast.LENGTH_LONG).show()
+                }
+                else{
+                    Toast.makeText(this, "One or more values are NULL! Select a location from dropdown", Toast.LENGTH_LONG).show()
+                }
+            }
+
+
             val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
             if (bluetoothAdapter == null) {
