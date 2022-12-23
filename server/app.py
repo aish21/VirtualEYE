@@ -170,25 +170,6 @@ def process5():
                 status = editDBdata.create_server(conn, newVM)
         
         return status
-    
-
-def startSecondVM():
-    authority_url = 'https://login.microsoftonline.com/'+TENANT_ID
-    context = adal.AuthenticationContext(authority_url)
-    token = context.acquire_token_with_client_credentials(
-        resource='https://management.azure.com/',
-        client_id=CLIENT,
-        client_secret=KEY
-    )
-
-    print(token["accessToken"])
-    authStr = "bearer " + token["accessToken"]
-
-    headers  = {"Authorization": authStr,
-                "Content-Type": "application/json"}
-
-    resp = requests.post("https://management.azure.com/subscriptions/9568b8d1-2087-47d1-b8ed-0baa6969f187/resourceGroups/VPS-Server/providers/Microsoft.Compute/virtualMachines/VPShost2/start?api-version=2022-03-01", headers= headers)
-    print(str(resp.status_code))
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(process5,'interval',seconds=60)

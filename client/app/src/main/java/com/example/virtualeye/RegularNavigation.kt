@@ -305,30 +305,24 @@ class RegularNavigation : AppCompatActivity() {
                 }
             }
 
-
+            // BLE Scanner Init
             val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-
             if (bluetoothAdapter == null) {
                 Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
                 finish()
             }
 
             mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
-
             mScanCallback = initCallbacks()
             //println(mScanCallback.toString())
             //println("mScanCallback")
-
             mBluetoothLeScanner?.startScan(mScanCallback)
-
         }
     }
 
     private fun initCallbacks(): ScanCallback {
         val name1 = "FCL Beacon1"
         val name2 = "FWM8BLZ02"
-        //val myRes = findViewById<TextView>(R.id.myEqn)
-        //val notMyRes = findViewById<TextView>(R.id.researchedEqn)
 
         return object : ScanCallback() {
             @SuppressLint("MissingPermission", "NewApi")

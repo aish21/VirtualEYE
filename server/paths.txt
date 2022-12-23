@@ -1,0 +1,11 @@
+cara -> lounge
+[("cara", "E4:7E:DB:B2:0D:3C"), ("lounge", "E3:2D:87:49:E5:BF")]
+
+cara -> hw1
+[("cara", "E4:7E:DB:B2:0D:3C"), ("lounge", "E3:2D:87:49:E5:BF"), ("sw1", "CF:BD:6D:B7:8E:7D"), ("washroom", "D8:3F:BB:F5:EF:5E"), ("hw1", "F1:C6:5F:C8:71:9D")]
+
+cara -> hw2
+[("cara", "E4:7E:DB:B2:0D:3C"), ("lounge", "E3:2D:87:49:E5:BF"), ("sw1", "CF:BD:6D:B7:8E:7D"), ("washroom", "D8:3F:BB:F5:EF:5E"), ("hw2", "F1:C6:5F:C8:71:9D")]
+
+cara -> sw1
+[("cara", "E4:7E:DB:B2:0D:3C"), ("lounge", "E3:2D:87:49:E5:BF"), ("sw1", "CF:BD:6D:B7:8E:7D")]
