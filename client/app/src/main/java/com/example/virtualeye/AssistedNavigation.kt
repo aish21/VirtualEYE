@@ -59,7 +59,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
         welcomeMsg_tts = TextToSpeech(this) {
             if (it == TextToSpeech.SUCCESS) {
-                welcomeMsg_tts.setSpeechRate(0.75f)
+                welcomeMsg_tts.setSpeechRate(0.95f)
                 welcomeMsg_tts.speak(
                     "Welcome to Assisted Navigation! Shake phone to set the start point and destination",
                     TextToSpeech.QUEUE_FLUSH,
