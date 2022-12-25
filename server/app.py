@@ -1,9 +1,6 @@
 # Flask imports
-# from asyncio.windows_events import NULL
-from telnetlib import STATUS
 from flask import Flask
 from flask import request
-from apscheduler.schedulers.background import BackgroundScheduler
 import json
 import time
 import requests
@@ -12,26 +9,24 @@ import requests
 import modules.editDBdata as editDBdata
 import modules.pathCalc as pathCalc
 
-# Globals
-databaseFile = r'db/client_server_data.db' 
-vmCapList = []
-
 app = Flask(__name__)
 
-@app.route('/clientConnected', methods=['GET', 'POST'])
+@app.route('/sendLoc', methods=['GET', 'POST'])
 def process1():
     '''
-    1. Check if client exists in the client database
-    2. Add Client to database
-    3. If client exists + status = PROCESSING, return status + assigned VM IP (client needs to continuously query)
-
-    /clientConnected?client_id=xxxx - to be sent client side
+    /sendLoc?user_loc=xxxx - to be sent from client side
     '''
 
-    # Process the POST data - retrieve the client ID
-    client_id = request.args.get('client_id')
+    start_loc = ['cara', '']
+
+    # Process the POST data - retrieve the user's instructions
+    locations = request.args.get('user_loc')
+
+    start_dest = locations.split(" to ")
+    start_loc = start_dest[0]
+    dest_loc = start_dest[1]
     
-    if(client_id == None):
+    if(locations == None):
         return "Invalid request format"
     
     else:
@@ -103,81 +98,6 @@ def process3():
         return "Error! Cannot create database connection"
     
     return status
-
-@app.route('/clientDisconnected', methods=['GET', 'POST'])
-def process4():
-    '''
-    1. Recieve POST request from client
-    2. Change status of client in the DB and delete record
-
-    /clientDisconnected?client_id=xxxx - to be sent client side
-    '''
-
-    # Process the POST data - retrieve the client ID
-    client_id = request.args.get('client_id')
-    
-    if(client_id == None):
-        return "Invalid request format"
-    
-    else:
-        # Create database connection
-        conn = editDBdata.createConn(databaseFile)
-
-        if conn is not None:
-            with conn:
-                clientExists = editDBdata.check_client_exists(conn, client_id)
-                if(clientExists[0] == True):
-                    stat = editDBdata.update_client(conn, (clientExists[1], 'DISCONNECTED', clientExists[3], clientExists[1]))
-                    if(stat[0] == False):
-                        return stat[1]
-                    else:
-                        status = editDBdata.delete_client(conn, client_id)
-                else:
-                    status = clientExists[1]
-        else:
-            return "Error! Cannot create database connection"
-        
-        return status
-
-def process5():
-    '''
-    1. Function is called every 5-10 seconds: this value can be tweaked
-    2. Function checks the server table for VM capacities 
-    3. Create new VMs based on capacities 
-    4. Update the table with new VMS and capacities
-    '''
-
-    # Create database connection
-    conn = editDBdata.createConn(databaseFile)
-    list_of_low_capacity = editDBdata.check_server_capacity(conn)
-    startVM2 = editDBdata.check_vm1_cap(conn)
-
-    if(startVM2):
-        startSecondVM()
-        print('Second VM has started')
-    
-    if(len(list_of_low_capacity) == 0):
-        print('All servers are ready to accepts clients')
-
-    else:
-        for vm in list_of_low_capacity:
-            print(vmCapList)
-            if(vm not in vmCapList):
-                print('here')
-                vmCapList.append(vm)
-                newVM = pathCalc.createVirtualMachine()
-                time.sleep(30)
-                status = editDBdata.create_server(conn, newVM)
-        
-        return status
-
-sched = BackgroundScheduler(daemon=True)
-sched.add_job(process5,'interval',seconds=60)
-sched.start()
-
-sched2 = BackgroundScheduler(daemon=True)
-sched2.add_job(process2,'interval',seconds=20)
-sched2.start()
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

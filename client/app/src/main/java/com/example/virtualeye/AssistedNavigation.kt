@@ -34,6 +34,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
+import java.net.HttpURLConnection
+import java.net.URL
 
 class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
@@ -42,10 +44,13 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var tts: TextToSpeech
     private lateinit var welcomeMsg_tts: TextToSpeech
+    private lateinit var errorMsg_tts: TextToSpeech
     private lateinit var setPoints: TextToSpeech
     private lateinit var sensorManager2: SensorManager
     private var mSpeechRecognizer: SpeechRecognizer? = null
     private var mIsListening = false
+    val startList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
+    val destList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -68,7 +73,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 )
             }
         }
-
 
         // Init Sensor Manager
         sensorManager2 = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -121,10 +125,13 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             //  If the acceleration is greater than 2, it indicates that the phone has been shaken
             if (acceleration > 2) {
                 // When detected
+//                if (tts.isSpeaking) {
+//                    tts.stop()
+//                }
 
                 setPoints = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
-                        setPoints.setSpeechRate(0.75f)
+                        setPoints.setSpeechRate(0.95f)
                         setPoints.speak(
                             "Speak the locations in the following format - START LOCATION to DESTINATION",
                             TextToSpeech.QUEUE_FLUSH,
@@ -165,6 +172,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun bindPreview(cameraProvider: ProcessCameraProvider){
+        var textToSay = "None"
         val preview = Preview.Builder().build()
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -183,21 +191,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 objectDetector.process(processImage)
                     .addOnSuccessListener { objects ->
 
-                        tts = TextToSpeech(this) {
-                            if (it == TextToSpeech.SUCCESS) {
-                                tts.speak(
-                                    "Object Detected",
-                                    TextToSpeech.QUEUE_FLUSH,
-                                    null,
-                                    null
-                                )
-                            }
-                        }
-
-                        if (tts.isSpeaking) {
-                            tts.stop()
-                        }
-
                         for (i in objects) {
 
                             if(binding.parentLayout.childCount > 1) binding.parentLayout.removeViewAt(1)
@@ -206,18 +199,23 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                                 rect = i.boundingBox,
                                 text = i.labels.firstOrNull()?.text ?: "Undefined")
 
-                            val textToSay = i.labels.firstOrNull()?.text
+                            val objDet = i.labels.firstOrNull()?.text
 
                             binding.parentLayout.addView(element)
 
                             tts = TextToSpeech(this) {
                                 if (it == TextToSpeech.SUCCESS) {
-                                    tts.speak(
-                                        textToSay + "detected",
-                                        TextToSpeech.QUEUE_FLUSH,
-                                        null,
-                                        null
-                                    )
+                                    if (textToSay != objDet && !setPoints.isSpeaking && !errorMsg_tts.isSpeaking) {
+                                        tts.speak(
+                                            textToSay + "detected",
+                                            TextToSpeech.QUEUE_FLUSH,
+                                            null,
+                                            null
+                                        )
+                                        if (objDet != null) {
+                                            textToSay = objDet
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -307,8 +305,87 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     }
 
     private fun handleCommand(command: String) {
-        // TODO - Function to handle user commands
         Toast.makeText(this, command, Toast.LENGTH_LONG).show()
+
+        if(command.contains("to")){
+            val (startPoint, destLoc) = splitString(command)
+            if (startList.contains(startPoint)){
+                if (destList.contains(destLoc)){
+                    // TODO - Send the start and dest to server
+                    sendRequest(startPoint, destLoc)
+                }
+                else{
+                    errorMsg_tts = TextToSpeech(this) {
+                        if (it == TextToSpeech.SUCCESS) {
+                            errorMsg_tts.setSpeechRate(0.95f)
+                            errorMsg_tts.speak(
+                                "Destination does not exist, please shake the phone and try again!",
+                                TextToSpeech.QUEUE_FLUSH,
+                                null,
+                                null
+                            )
+                        }
+                    }
+                }
+            }
+            else{
+                errorMsg_tts = TextToSpeech(this) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        errorMsg_tts.setSpeechRate(0.95f)
+                        errorMsg_tts.speak(
+                            "Start location does not exist, please shake the phone and try again!",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            null
+                        )
+                    }
+                }
+            }
+        }
+        else{
+            errorMsg_tts = TextToSpeech(this) {
+                if (it == TextToSpeech.SUCCESS) {
+                    errorMsg_tts.setSpeechRate(0.95f)
+                    errorMsg_tts.speak(
+                        "Invalid direction format, please shake the phone and try again!",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
+            }
+        }
+
+    }
+
+    private fun splitString(s: String): Pair<String, String> {
+        val parts = s.split(" to ")
+        return parts[0] to parts[1]
+    }
+
+    private fun sendRequest(startLoc: String, destLoc: String) {
+        val url = URL("http://192.168.1.3/sendLoc")
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+
+        // Set the request body
+        val params = "user_loc=$startLoc&var2=$destLoc"
+        connection.doOutput = true
+        val outputStream = connection.outputStream
+        outputStream.write(params.toByteArray())
+
+        // Send the request and get the response
+        connection.connect()
+        val responseCode = connection.responseCode
+        println("Response code: $responseCode")
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val inputStream = connection.inputStream
+            val response = inputStream.bufferedReader().readText()
+            println("Response: $response")
+        }
+
+        // Close the connection
+        connection.disconnect()
     }
 
 }
