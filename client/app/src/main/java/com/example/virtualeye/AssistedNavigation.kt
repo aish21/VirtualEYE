@@ -369,7 +369,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         connection.requestMethod = "POST"
 
         // Set the request body
-        val params = "user_loc=$startLoc&var2=$destLoc"
+        val params = "startLoc=$startLoc&destLoc=$destLoc"
         connection.doOutput = true
         val outputStream = connection.outputStream
         outputStream.write(params.toByteArray())
