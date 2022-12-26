@@ -2,6 +2,10 @@ package com.example.virtualeye
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -51,6 +55,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private var mIsListening = false
     val startList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
     val destList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
+    var mBluetoothLeScanner: BluetoothLeScanner? = null
+    var mScanCallback: ScanCallback? = null
+    var BLEScanMac: String? = null
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -304,6 +311,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         mSpeechRecognizer!!.cancel()
     }
 
+    @SuppressLint("MissingPermission")
     private fun handleCommand(command: String) {
         Toast.makeText(this, command, Toast.LENGTH_LONG).show()
 
@@ -311,8 +319,29 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             val (startPoint, destLoc) = splitString(command)
             if (startList.contains(startPoint)){
                 if (destList.contains(destLoc)){
-                    // TODO - Send the start and dest to server
-                    sendRequest(startPoint, destLoc)
+
+                    // BLE Scanner Init
+                    val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+                    if (bluetoothAdapter == null) {
+                        Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+
+                    // Send the start and dest to server
+                    val resp = sendRequest(startPoint, destLoc)
+
+                    // Start BLE scan
+                    mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
+                    mScanCallback = initCallbacks()
+                    //println(mScanCallback.toString())
+                    //println("mScanCallback")
+                    mBluetoothLeScanner?.startScan(mScanCallback)
+
+
+                    // TODO - Process result from server
+                    
+
+
                 }
                 else{
                     errorMsg_tts = TextToSpeech(this) {
@@ -363,7 +392,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         return parts[0] to parts[1]
     }
 
-    private fun sendRequest(startLoc: String, destLoc: String) {
+    private fun sendRequest(startLoc: String, destLoc: String): List<String> {
         val url = URL("http://192.168.1.3/sendLoc")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -378,14 +407,47 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         connection.connect()
         val responseCode = connection.responseCode
         println("Response code: $responseCode")
-        if (responseCode == HttpURLConnection.HTTP_OK) {
+        return if (responseCode == HttpURLConnection.HTTP_OK) {
             val inputStream = connection.inputStream
             val response = inputStream.bufferedReader().readText()
             println("Response: $response")
-        }
 
-        // Close the connection
-        connection.disconnect()
+            // Close the connection
+            connection.disconnect()
+            response.split(",").map { it.trim() }
+        } else{
+            listOf("Error")
+        }
     }
 
+    private fun initCallbacks(): ScanCallback {
+        val name1 = "FCL Beacon1"
+        val name2 = "FWM8BLZ02"
+
+        return object : ScanCallback() {
+            @SuppressLint("MissingPermission", "NewApi")
+            override fun onScanResult(
+                callbackType: Int,
+                result: ScanResult
+            ) {
+                super.onScanResult(callbackType, result)
+
+                if (result.device != null) {
+                    if(result.device.name != null) {
+                        //addDevice(result.getDevice(), result.getRssi());
+                        if(result.device.name.equals(name1) or result.device.name.equals(name2)) {
+                            Log.i("BLE NAME: ", result.device.name)
+                            //println(result.device.name)
+                            Log.i("BLE MAC: ", result.device.toString())
+                            BLEScanMac = result.device.toString()
+                            //println(result.device)
+                            Log.i("BLE RSSI: ", result.rssi.toString())
+                            //println(result.rssi)
+                        }
+                    }
+                }
+                return
+            }
+        }
+    }
 }
