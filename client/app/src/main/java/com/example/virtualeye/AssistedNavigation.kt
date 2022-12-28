@@ -38,6 +38,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -58,6 +59,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     var mBluetoothLeScanner: BluetoothLeScanner? = null
     var mScanCallback: ScanCallback? = null
     var BLEScanMac: String? = null
+    var checkpoints = listOf("bla")
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -328,7 +330,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     }
 
                     // Send the start and dest to server
-                    val resp = sendRequest(startPoint, destLoc)
+                    val respJSON = sendRequest(startPoint, destLoc)
+                    val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
+                    val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
 
                     // Start BLE scan
                     mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
@@ -337,9 +341,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     //println("mScanCallback")
                     mBluetoothLeScanner?.startScan(mScanCallback)
 
-
                     // TODO - Process result from server
                     
+
+
 
 
                 }
@@ -392,7 +397,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         return parts[0] to parts[1]
     }
 
-    private fun sendRequest(startLoc: String, destLoc: String): List<String> {
+    private fun sendRequest(startLoc: String, destLoc: String): JSONObject {
         val url = URL("http://192.168.1.3/sendLoc")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -407,16 +412,16 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         connection.connect()
         val responseCode = connection.responseCode
         println("Response code: $responseCode")
-        return if (responseCode == HttpURLConnection.HTTP_OK) {
+        if (responseCode == HttpURLConnection.HTTP_OK) {
             val inputStream = connection.inputStream
             val response = inputStream.bufferedReader().readText()
             println("Response: $response")
 
             // Close the connection
             connection.disconnect()
-            response.split(",").map { it.trim() }
+            return JSONObject(response)
         } else{
-            listOf("Error")
+            return JSONObject("Error")
         }
     }
 

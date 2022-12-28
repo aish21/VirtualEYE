@@ -1,7 +1,7 @@
 # Flask imports
 from flask import Flask
 from flask import request
-import json
+from flask import jsonify
 import time
 import requests
 
@@ -38,7 +38,7 @@ def process1():
     for i in range(len(shortest_path)-1):
         directions.append(graph[shortest_path[i]][shortest_path[i+1]])
     
-    return shortest_path, directions
+    return jsonify({"path": shortest_path, "directions": directions}) 
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

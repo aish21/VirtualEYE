@@ -1,5 +1,8 @@
+import jsonify
+
 # Create an empty dictionary to store the edges and their labels
 graph = {}
+directions = []
 
 # Add edges to the graph with custom labels
 graph["cara"] = {"lounge": "left"}
@@ -45,3 +48,6 @@ print("Shortest path:", shortest_path)
 print("Edges traversed:")
 for i in range(len(shortest_path)-1):
   print(f"{shortest_path[i]} to {shortest_path[i+1]}: {graph[shortest_path[i]][shortest_path[i+1]]}")
+  directions.append(graph[shortest_path[i]][shortest_path[i+1]])
+
+print(jsonify({"path": shortest_path, "dir": directions}))
