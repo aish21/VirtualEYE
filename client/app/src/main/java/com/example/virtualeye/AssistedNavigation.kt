@@ -39,6 +39,7 @@ import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 import org.json.JSONObject
+import java.lang.Character.toLowerCase
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -134,21 +135,22 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             //  If the acceleration is greater than 2, it indicates that the phone has been shaken
             if (acceleration > 2) {
                 // When detected
-//                if (tts.isSpeaking) {
-//                    tts.stop()
+
+//                tts = TextToSpeech(this) {
+//                    if (it == TextToSpeech.SUCCESS) {
+//                        tts.setSpeechRate(1.00f)
+//                        tts.speak(
+//                            "Speak the locations in the following format - START LOCATION to DESTINATION",
+//                            TextToSpeech.QUEUE_FLUSH,
+//                            null,
+//                            null
+//                        )
+//                    }
 //                }
 
-                setPoints = TextToSpeech(this) {
-                    if (it == TextToSpeech.SUCCESS) {
-                        setPoints.setSpeechRate(0.95f)
-                        setPoints.speak(
-                            "Speak the locations in the following format - START LOCATION to DESTINATION",
-                            TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            null
-                        )
-                    }
-                }
+//                Thread.sleep(3000)
+
+
 
                 verifyAudioPermissions()
                 createSpeechRecognizer()
@@ -214,7 +216,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                             tts = TextToSpeech(this) {
                                 if (it == TextToSpeech.SUCCESS) {
-                                    if (textToSay != objDet && !setPoints.isSpeaking && !errorMsg_tts.isSpeaking) {
+                                    if (textToSay != objDet && !tts.isSpeaking) {
                                         tts.speak(
                                             textToSay + "detected",
                                             TextToSpeech.QUEUE_FLUSH,
@@ -319,6 +321,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
         if(command.contains("to")){
             val (startPoint, destLoc) = splitString(command)
+            Log.i("START AND DEST", startPoint + destLoc)
             if (startList.contains(startPoint)){
                 if (destList.contains(destLoc)){
 
@@ -330,9 +333,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     }
 
                     // Send the start and dest to server
-                    val respJSON = sendRequest(startPoint, destLoc)
-                    val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
-                    val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
+//                    val respJSON = sendRequest(startPoint, destLoc)
+//                    val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
+//                    val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
 
                     // Start BLE scan
                     mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
@@ -342,17 +345,17 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     mBluetoothLeScanner?.startScan(mScanCallback)
 
                     // TODO - Process result from server
-                    
+                    Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
 
 
 
 
                 }
                 else{
-                    errorMsg_tts = TextToSpeech(this) {
+                    tts = TextToSpeech(this) {
                         if (it == TextToSpeech.SUCCESS) {
-                            errorMsg_tts.setSpeechRate(0.95f)
-                            errorMsg_tts.speak(
+                            tts.setSpeechRate(0.95f)
+                            tts.speak(
                                 "Destination does not exist, please shake the phone and try again!",
                                 TextToSpeech.QUEUE_FLUSH,
                                 null,
@@ -363,10 +366,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
             else{
-                errorMsg_tts = TextToSpeech(this) {
+                tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
-                        errorMsg_tts.setSpeechRate(0.95f)
-                        errorMsg_tts.speak(
+                        tts.setSpeechRate(0.95f)
+                        tts.speak(
                             "Start location does not exist, please shake the phone and try again!",
                             TextToSpeech.QUEUE_FLUSH,
                             null,
@@ -377,10 +380,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
         else{
-            errorMsg_tts = TextToSpeech(this) {
+            tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
-                    errorMsg_tts.setSpeechRate(0.95f)
-                    errorMsg_tts.speak(
+                    tts.setSpeechRate(0.95f)
+                    tts.speak(
                         "Invalid direction format, please shake the phone and try again!",
                         TextToSpeech.QUEUE_FLUSH,
                         null,
@@ -393,7 +396,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     }
 
     private fun splitString(s: String): Pair<String, String> {
-        val parts = s.split(" to ")
+        val parts = s.lowercase().split(" to ")
         return parts[0] to parts[1]
     }
 
