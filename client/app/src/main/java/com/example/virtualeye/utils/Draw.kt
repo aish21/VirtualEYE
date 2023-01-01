@@ -26,7 +26,7 @@ class Draw(context: Context?, var rect: Rect, var text: String) : View(context) 
 
         textPaint = Paint()
         textPaint.color = Color.GREEN
-        textPaint.strokeWidth = 50f
+        textPaint.strokeWidth = 75f
         textPaint.style = Paint.Style.FILL
     }
 

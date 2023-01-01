@@ -76,7 +76,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             if (it == TextToSpeech.SUCCESS) {
                 welcomeMsg_tts.setSpeechRate(0.95f)
                 welcomeMsg_tts.speak(
-                    "Welcome to Assisted Navigation! Shake phone to set the start point and destination",
+                    "Welcome to Assisted Navigation! Shake phone to set the start point and destination in the format - START LOCATION to DESTINATION",
                     TextToSpeech.QUEUE_FLUSH,
                     null,
                     null
@@ -134,6 +134,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
             //  If the acceleration is greater than 2, it indicates that the phone has been shaken
             if (acceleration > 2) {
+
+                if(tts.isSpeaking){
+                    tts.stop()
+                }
                 // When detected
 
 //                tts = TextToSpeech(this) {
@@ -150,14 +154,15 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
 //                Thread.sleep(3000)
 
-
-
                 verifyAudioPermissions()
                 createSpeechRecognizer()
 
                 if (mIsListening) {
                     handleSpeechEnd()
                 } else {
+                    if(tts.isSpeaking){
+                        tts.stop()
+                    }
                     handleSpeechBegin()
                 }
             }
@@ -346,7 +351,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                     // TODO - Process result from server
                     Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
-
+// process
 
 
 
