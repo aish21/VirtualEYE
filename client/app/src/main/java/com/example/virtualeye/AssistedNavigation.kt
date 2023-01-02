@@ -60,6 +60,8 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     var mBluetoothLeScanner: BluetoothLeScanner? = null
     var mScanCallback: ScanCallback? = null
     var BLEScanMac: String? = null
+    var path = mutableListOf<String>()
+    var directions = mutableListOf<String>()
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -343,16 +345,35 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                         finish()
                     }
 
+                    tts = TextToSpeech(this) {
+                        if (it == TextToSpeech.SUCCESS) {
+                            tts.setSpeechRate(0.95f)
+                            tts.speak(
+                                "Calculating route from $startPoint to $destLoc",
+                                TextToSpeech.QUEUE_FLUSH,
+                                null,
+                                null
+                            )
+                        }
+                    }
+
                     // Send the start and dest to server
                     GlobalScope.launch {
                         Log.i("Check", "HERE")
                         val respJSON = sendRequest(startPoint, destLoc)
                         // Update the UI or do something with the response here
                         Log.i("RESP", respJSON.toString())
-                        val path = respJSON.getJSONArray("path")
-                        //val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
-                        val directions = respJSON.getJSONArray("directions")
-                        //val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
+
+                        val pathTemp = respJSON.getJSONArray("path")
+                        for (i in 0 until pathTemp.length()) {
+                            path.add(pathTemp.get(i) as String)
+                        }
+
+                        val directionsTemp = respJSON.getJSONArray("directions")
+                        for (i in 0 until directionsTemp.length()) {
+                            directions.add(directionsTemp.get(i) as String)
+                        }
+
                         println(path)
                         println(path::class)
                         println(directions)
@@ -363,18 +384,51 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     // Start BLE scan
                     mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
                     mScanCallback = initCallbacks()
-                    //println(mScanCallback.toString())
-                    //println("mScanCallback")
                     mBluetoothLeScanner?.startScan(mScanCallback)
 
                     // TODO - Process result from server
-                    //Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
 
-
-
-
-
-
+//                    // Pair up the directions and locations
+//                    val navPoints = directions.zip(path)
+//
+//                    // Start at the first location
+//                    var currentLocation = path.first()
+//
+//                    // Navigate to the final destination
+//                    for ((direction, location) in navPoints) {
+//                        when (direction) {
+//                            "left" -> {
+//                                // Check if the user has truly turned left
+//                                if (isLeftTurn(currentLocation, location)) {
+//                                    // Update the current location
+//                                    currentLocation = location
+//                                } else {
+//                                    // The user didn't turn left, display an error message
+//                                    println("Error: You didn't turn left!")
+//                                }
+//                            }
+//                            "right" -> {
+//                                // Check if the user has truly turned right
+//                                if (isRightTurn(currentLocation, location)) {
+//                                    // Update the current location
+//                                    currentLocation = location
+//                                } else {
+//                                    // The user didn't turn right, display an error message
+//                                    println("Error: You didn't turn right!")
+//                                }
+//                            }
+//                            "straight" -> {
+//                                // Check if the user went straight
+//                                if (isStraight(currentLocation, location)) {
+//                                    // Update the current location
+//                                    currentLocation = location
+//                                } else {
+//                                    // The user didn't go straight, display an error message
+//                                    println("Error: You didn't go straight!")
+//                                }
+//                            }
+//                        }
+//                    }
                 }
                 else{
                     tts = TextToSpeech(this) {
