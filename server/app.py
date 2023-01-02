@@ -12,13 +12,13 @@ import modules.pathCalc as pathCalc
 graph = {}
 
 # Add edges to the graph with custom labels
-graph["cara"] = {"lounge": "left"}
-graph["lounge"] = {"cara": "right", "sw1": "straight"}
-graph["sw1"] = {"lounge": "straight", "hw1": "left", "hw2": "straight"}
-graph["hw1"] = {"sw1": "right", "hw2": "left"}
-graph["hw2"] = {"hw1": "right", "sw2": "left", "sw1": "straight", "hw_proj": "straight"}
-graph["sw2"] = {"hw2": "right", "hw_proj": "left"}
-graph["hw_proj"] = {"sw2": "right", "hw2": "straight"}
+graph["cara"] = {"student lounge": "left"}
+graph["student lounge"] = {"cara": "right", "software lab 1": "straight"}
+graph["software lab 1"] = {"student lounge": "straight", "hardware lab 1": "left", "hardware lab 2": "straight"}
+graph["hardware lab 1"] = {"software lab 1": "right", "hardware lab 2": "left"}
+graph["hardware lab 2"] = {"hardware lab 1": "right", "software lab 2": "left", "software lab 1": "straight", "hardware projects lab": "straight"}
+graph["software lab 2"] = {"hardware lab 2": "right", "hardware projects lab": "left"}
+graph["hardware projects lab"] = {"software lab 2": "right", "hardware lab 2": "straight"}
 
 app = Flask(__name__)
 
@@ -31,6 +31,8 @@ def process1():
     # Process the POST data - retrieve the user's instructions
     start_loc = request.args.get('startLoc')
     dest_loc = request.args.get('destLoc')
+    print(start_loc)
+    print(dest_loc)
     directions = []
 
     shortest_path = pathCalc.shortest_path(graph, start_loc, dest_loc)

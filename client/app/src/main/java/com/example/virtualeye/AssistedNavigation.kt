@@ -38,7 +38,10 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
+import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.io.BufferedInputStream
+import java.io.InputStream
 import java.lang.Character.toLowerCase
 import java.net.HttpURLConnection
 import java.net.URL
@@ -60,7 +63,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     var mBluetoothLeScanner: BluetoothLeScanner? = null
     var mScanCallback: ScanCallback? = null
     var BLEScanMac: String? = null
-    var checkpoints = listOf("bla")
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -320,9 +322,18 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         mSpeechRecognizer!!.cancel()
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     private fun handleCommand(command: String) {
         Toast.makeText(this, command, Toast.LENGTH_LONG).show()
+        val dictBLE: MutableMap<String, String> = mutableMapOf()
+        dictBLE["cara"] = "E4:7E:DB:B2:0D:3C"
+        dictBLE["student lounge"] = "E3:2D:87:49:E5:BF"
+        dictBLE["hardware lab 1"] = "CF:BD:6D:B7:8E:7D"
+        dictBLE["hardware lab 2"] = "D8:3F:BB:F5:EF:5E"
+        dictBLE["software lab 1"] = "F1:C6:5F:C8:71:9D"
+        dictBLE["software lab 2"] = "D6:65:D2:8F:C5:8F"
+        dictBLE["hardware projects lab"] = "E9:4E:48:02:C6:84"
 
         if(command.contains("to")){
             val (startPoint, destLoc) = splitString(command)
@@ -338,9 +349,16 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     }
 
                     // Send the start and dest to server
-//                    val respJSON = sendRequest(startPoint, destLoc)
-//                    val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
-//                    val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
+                    GlobalScope.launch {
+                        Log.i("Check", "HERE")
+                        val respJSON = sendRequest("cara", "hardware lab 1")
+                        // Update the UI or do something with the response here
+                        Log.i("RESP", respJSON.toString())
+                        val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
+                        val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
+                        Log.i("PATH AND DIR", path.toString() + directions.toString())
+                    }
+                    //job.cancel()
 
                     // Start BLE scan
                     mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
@@ -350,8 +368,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     mBluetoothLeScanner?.startScan(mScanCallback)
 
                     // TODO - Process result from server
-                    Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
-// process
+                    //Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
+
+
 
 
 
@@ -405,31 +424,13 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         return parts[0] to parts[1]
     }
 
-    private fun sendRequest(startLoc: String, destLoc: String): JSONObject {
-        val url = URL("http://192.168.1.3/sendLoc")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-
-        // Set the request body
-        val params = "startLoc=$startLoc&destLoc=$destLoc"
-        connection.doOutput = true
-        val outputStream = connection.outputStream
-        outputStream.write(params.toByteArray())
-
-        // Send the request and get the response
-        connection.connect()
-        val responseCode = connection.responseCode
-        println("Response code: $responseCode")
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val inputStream = connection.inputStream
-            val response = inputStream.bufferedReader().readText()
-            println("Response: $response")
-
-            // Close the connection
-            connection.disconnect()
-            return JSONObject(response)
-        } else{
-            return JSONObject("Error")
+    private suspend fun sendRequest(startLoc: String, destLoc: String): JSONObject {
+        return withContext(Dispatchers.IO) {
+            Log.i("CHECK 2", "in fn")
+            val request = URL("http://192.168.1.68:5000/sendLoc?startLoc=$startLoc&destLoc=$destLoc").openConnection() as HttpURLConnection
+            Log.i("CHECK 3", "aft req")
+            request.requestMethod = "POST"
+            JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
         }
     }
 

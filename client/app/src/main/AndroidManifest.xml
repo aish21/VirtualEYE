@@ -17,6 +17,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,6 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VirtualEye"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
