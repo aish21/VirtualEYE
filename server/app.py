@@ -36,6 +36,7 @@ def process1():
     directions = []
 
     shortest_path = pathCalc.shortest_path(graph, start_loc, dest_loc)
+    shortest_path.pop(0)
     
     for i in range(len(shortest_path)-1):
         directions.append(graph[shortest_path[i]][shortest_path[i+1]])

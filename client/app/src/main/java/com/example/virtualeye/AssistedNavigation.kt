@@ -40,9 +40,6 @@ import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.io.BufferedInputStream
-import java.io.InputStream
-import java.lang.Character.toLowerCase
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -190,7 +187,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun bindPreview(cameraProvider: ProcessCameraProvider){
-        var textToSay = "None"
+        var textToSay = "Undefined"
         val preview = Preview.Builder().build()
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -217,7 +214,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                                 rect = i.boundingBox,
                                 text = i.labels.firstOrNull()?.text ?: "Undefined")
 
-                            val objDet = i.labels.firstOrNull()?.text
+                            val objDet = i.labels.firstOrNull()?.text ?: "Undefined"
 
                             binding.parentLayout.addView(element)
 
@@ -225,14 +222,12 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                                 if (it == TextToSpeech.SUCCESS) {
                                     if (textToSay != objDet && !tts.isSpeaking) {
                                         tts.speak(
-                                            textToSay + "detected",
+                                            objDet + "detected",
                                             TextToSpeech.QUEUE_FLUSH,
                                             null,
                                             null
                                         )
-                                        if (objDet != null) {
-                                            textToSay = objDet
-                                        }
+                                        textToSay = objDet
                                     }
                                 }
                             }
@@ -351,12 +346,17 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     // Send the start and dest to server
                     GlobalScope.launch {
                         Log.i("Check", "HERE")
-                        val respJSON = sendRequest("cara", "hardware lab 1")
+                        val respJSON = sendRequest(startPoint, destLoc)
                         // Update the UI or do something with the response here
                         Log.i("RESP", respJSON.toString())
-                        val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
-                        val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
-                        Log.i("PATH AND DIR", path.toString() + directions.toString())
+                        val path = respJSON.getJSONArray("path")
+                        //val path = respJSON.getJSONArray("path").toString().split(",").map { it.trim() }
+                        val directions = respJSON.getJSONArray("directions")
+                        //val directions = respJSON.getJSONArray("directions").toString().split(",").map { it.trim() }
+                        println(path)
+                        println(path::class)
+                        println(directions)
+                        println(directions::class)
                     }
                     //job.cancel()
 
@@ -369,6 +369,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                     // TODO - Process result from server
                     //Toast.makeText(this, startPoint + destLoc, Toast.LENGTH_LONG).show()
+
 
 
 
