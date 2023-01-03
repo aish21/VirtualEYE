@@ -16,7 +16,10 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_GAME
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -46,10 +49,6 @@ import org.json.JSONObject
 import java.lang.Math.toDegrees
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
@@ -58,7 +57,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var tts: TextToSpeech
     private lateinit var welcomeMsg_tts: TextToSpeech
-    private lateinit var errorMsg_tts: TextToSpeech
     private lateinit var setPoints: TextToSpeech
     private lateinit var sensorManager: SensorManager
     private lateinit var sensorManager2: SensorManager
@@ -71,7 +69,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     var BLEScanMac: String? = null
     var path = mutableListOf<String>()
     var directions = mutableListOf<String>()
-    private var compassDirection = 0f
     var compassDir: String? = null
     lateinit var accelerometer: Sensor
     lateinit var magnetometer: Sensor
@@ -134,15 +131,12 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     // Sensor change functions
     override fun onResume() {
         super.onResume()
-//        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-//            SensorManager.SENSOR_DELAY_UI)
         sensorManager2.registerListener(this,
             sensorManager2.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, accelerometer, SENSOR_DELAY_GAME)
         sensorManager.registerListener(this, magnetometer, SENSOR_DELAY_GAME)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -153,6 +147,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
+
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0]
             val y = event.values[1]
@@ -164,20 +159,26 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             //  If the acceleration is greater than 2, it indicates that the phone has been shaken
             if (acceleration > 2) {
 
-                if(tts.isSpeaking){
-                    tts.stop()
-                }
-                verifyAudioPermissions()
-                createSpeechRecognizer()
+//                GlobalScope.launch {
+//                    // start a new coroutine in background and continue
+//                    val result = async {  }.await()
+//                    println("Result: $result")
+//                }
 
-                if (mIsListening) {
-                    handleSpeechEnd()
-                } else {
-                    if(tts.isSpeaking){
-                        tts.stop()
-                    }
-                    handleSpeechBegin()
-                }
+//                if(tts.isSpeaking){
+//                    tts.stop()
+//                }
+//                verifyAudioPermissions()
+//                createSpeechRecognizer()
+//
+//                if (mIsListening) {
+//                    handleSpeechEnd()
+//                } else {
+//                    if(tts.isSpeaking){
+//                        tts.stop()
+//                    }
+//                    handleSpeechBegin()
+//                }
             }
         }
 
@@ -202,12 +203,15 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         if (currentDegree >= 315 || currentDegree < 45) {
             // North
             compassDir = "N"
+
         } else if (currentDegree >= 45 && currentDegree < 135) {
             // East
             compassDir = "E"
+
         } else if (currentDegree >= 135 && currentDegree < 225) {
             // South
             compassDir = "S"
+
         } else if (currentDegree >= 225 && currentDegree < 315) {
             // West
             compassDir = "W"
@@ -215,7 +219,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         Log.i("Compass", "Direction: $compassDir")
     }
 
-    fun lowPass(input: FloatArray, output: FloatArray) {
+    private fun lowPass(input: FloatArray, output: FloatArray) {
         val alpha = 0.05f
         for (i in input.indices) {
             output[i] = output[i] + alpha * (input[i] - output[i])
@@ -446,37 +450,87 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     // Start at the first location
                     var currentLocation = path.first()
 
-                    // Navigate to the final destination
+                    // Navigate to the final destination - add while true before when and break
 //                    for ((direction, location) in navPoints) {
-//                        when (direction) {
-//                            "left" -> {
-//                                // Check if the user has truly turned left
-//                                if (isLeftTurn(currentLocation, location)) {
-//                                    // Update the current location
-//                                    currentLocation = location
-//                                } else {
-//                                    // The user didn't turn left, display an error message
-//                                    println("Error: You didn't turn left!")
+//                        while (true) {
+//                            when (direction) {
+//                                "left" -> {
+//                                    // Check if the user has truly turned left
+//                                    if (isLeftTurn(currentLocation, location)) {
+//
+//                                        tts = TextToSpeech(this) {
+//                                            if (it == TextToSpeech.SUCCESS) {
+//                                                tts.setSpeechRate(0.95f)
+//                                                tts.speak(
+//                                                    "In 2 metres, turn left and continue straight!",
+//                                                    TextToSpeech.QUEUE_FLUSH,
+//                                                    null,
+//                                                    null
+//                                                )
+//                                            }
+//                                        }
+//
+//                                        // Update the current location
+//                                        currentLocation = location
+//                                        break
+//                                    } else {
+//                                        // The user didn't turn left, display an error message
+//                                        tts = TextToSpeech(this) {
+//                                            if (it == TextToSpeech.SUCCESS) {
+//                                                tts.setSpeechRate(0.95f)
+//                                                tts.speak(
+//                                                    "Facing the wrong way!",
+//                                                    TextToSpeech.QUEUE_FLUSH,
+//                                                    null,
+//                                                    null
+//                                                )
+//                                            }
+//                                        }
+//                                    }
 //                                }
-//                            }
-//                            "right" -> {
-//                                // Check if the user has truly turned right
-//                                if (isRightTurn(currentLocation, location)) {
-//                                    // Update the current location
-//                                    currentLocation = location
-//                                } else {
-//                                    // The user didn't turn right, display an error message
-//                                    println("Error: You didn't turn right!")
+//                                "right" -> {
+//                                    // Check if the user has truly turned right
+//                                    if (isRightTurn(currentLocation, location)) {
+//
+//                                        tts = TextToSpeech(this) {
+//                                            if (it == TextToSpeech.SUCCESS) {
+//                                                tts.setSpeechRate(0.95f)
+//                                                tts.speak(
+//                                                    "In 2 metres, turn left and continue straight!",
+//                                                    TextToSpeech.QUEUE_FLUSH,
+//                                                    null,
+//                                                    null
+//                                                )
+//                                            }
+//                                        }
+//
+//                                        // Update the current location
+//                                        currentLocation = location
+//                                        break
+//                                    } else {
+//                                        // The user didn't turn right, display an error message
+//                                        tts = TextToSpeech(this) {
+//                                            if (it == TextToSpeech.SUCCESS) {
+//                                                tts.setSpeechRate(0.95f)
+//                                                tts.speak(
+//                                                    "Facing the wrong way!",
+//                                                    TextToSpeech.QUEUE_FLUSH,
+//                                                    null,
+//                                                    null
+//                                                )
+//                                            }
+//                                        }
+//                                    }
 //                                }
-//                            }
-//                            "straight" -> {
-//                                // Check if the user went straight
-//                                if (isStraight(currentLocation, location)) {
-//                                    // Update the current location
-//                                    currentLocation = location
-//                                } else {
-//                                    // The user didn't go straight, display an error message
-//                                    println("Error: You didn't go straight!")
+//                                "straight" -> {
+//                                    // Check if the user went straight
+//                                    if (isStraight(currentLocation, location)) {
+//                                        // Update the current location
+//                                        currentLocation = location
+//                                    } else {
+//                                        // The user didn't go straight, display an error message
+//                                        println("Error: You didn't go straight!")
+//                                    }
 //                                }
 //                            }
 //                        }
@@ -523,7 +577,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
         }
-
     }
 
     private fun splitString(s: String): Pair<String, String> {
@@ -539,6 +592,17 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             Log.i("CHECK 3", "aft req")
             request.requestMethod = "POST"
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
+        }
+    }
+
+    private fun vibratePhone() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) { // Vibrator availability checking
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE)) // New vibrate method for API Level 26 or higher
+            } else {
+                vibrator.vibrate(1000) // Vibrate method for below API Level 26
+            }
         }
     }
 
@@ -575,5 +639,17 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
 //    private fun isLeftTurn(currentLocation: String, location: String): Boolean {
 //
+//        if(currentLocation == "cara" && location == "student lounge"){
+//            println(compassDir)
+//            return compassDir == "N"
+//        }
+//    }
+//
+//    private fun isRightTurn(currentLocation: String, location: String): Boolean {
+//
+//        if(currentLocation == "cara" && location == "student lounge"){
+//            println(compassDir)
+//            return compassDir == "N"
+//        }
 //    }
 }

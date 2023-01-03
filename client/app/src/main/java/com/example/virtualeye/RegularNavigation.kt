@@ -90,8 +90,10 @@ class RegularNavigation : AppCompatActivity() {
                 }
             }
 
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Do something when no item is selected
+                spinner_start.foreground = getDrawable(R.drawable.start_drp)
             }
         }
 
@@ -103,31 +105,33 @@ class RegularNavigation : AppCompatActivity() {
 
                 when (selectedDest) {
                     "NULL" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.dest_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.dest_drp)
                     }
                     "Cybercrime Analysis & Research Alliance @ NTU (CARA)" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.cara_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.cara_drp)
                     }
                     "SCSE Student Lounge" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.lounge_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.lounge_drp)
                     }
                     "Hardware Lab 1" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.hw1_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.hw1_drp)
                     }
                     "Hardware Lab 2" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.hw2_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.hw2_drp)
                     }
                     "Software Lab 1" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.sw1_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.sw1_drp)
                     }
                     "Software Lab 2" -> {
-                        spinner_start.foreground = getDrawable(R.drawable.sw2_drp)
+                        spinner_dest.foreground = getDrawable(R.drawable.sw2_drp)
                     }
                 }
             }
 
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Do something when no item is selected
+                spinner_dest.foreground = getDrawable(R.drawable.dest_drp)
             }
         }
 
