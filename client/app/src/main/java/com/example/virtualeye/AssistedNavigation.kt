@@ -10,9 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
+import android.hardware.Sensor.TYPE_ACCELEROMETER
+import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.SensorManager.SENSOR_DELAY_GAME
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -40,8 +43,13 @@ import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.lang.Math.toDegrees
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
@@ -52,6 +60,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private lateinit var welcomeMsg_tts: TextToSpeech
     private lateinit var errorMsg_tts: TextToSpeech
     private lateinit var setPoints: TextToSpeech
+    private lateinit var sensorManager: SensorManager
     private lateinit var sensorManager2: SensorManager
     private var mSpeechRecognizer: SpeechRecognizer? = null
     private var mIsListening = false
@@ -62,6 +71,15 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     var BLEScanMac: String? = null
     var path = mutableListOf<String>()
     var directions = mutableListOf<String>()
+    private var compassDirection = 0f
+    var compassDir: String? = null
+    lateinit var accelerometer: Sensor
+    lateinit var magnetometer: Sensor
+    var currentDegree = 0.0f
+    var lastAccelerometer = FloatArray(3)
+    var lastMagnetometer = FloatArray(3)
+    var lastAccelerometerSet = false
+    var lastMagnetometerSet = false
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -86,7 +104,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         // Init Sensor Manager
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensorManager2 = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
+        magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
 
         binding = DataBindingUtil.setContentView(this, R.layout.assisted_navigation)
 
@@ -113,14 +134,21 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     // Sensor change functions
     override fun onResume() {
         super.onResume()
+//        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+//            SensorManager.SENSOR_DELAY_UI)
         sensorManager2.registerListener(this,
             sensorManager2.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, accelerometer, SENSOR_DELAY_GAME)
+        sensorManager.registerListener(this, magnetometer, SENSOR_DELAY_GAME)
     }
 
 
     override fun onPause() {
         super.onPause()
+//        sensorManager.unregisterListener(this)
+        sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.unregisterListener(this, magnetometer)
         sensorManager2.unregisterListener(this)
     }
 
@@ -139,22 +167,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 if(tts.isSpeaking){
                     tts.stop()
                 }
-                // When detected
-
-//                tts = TextToSpeech(this) {
-//                    if (it == TextToSpeech.SUCCESS) {
-//                        tts.setSpeechRate(1.00f)
-//                        tts.speak(
-//                            "Speak the locations in the following format - START LOCATION to DESTINATION",
-//                            TextToSpeech.QUEUE_FLUSH,
-//                            null,
-//                            null
-//                        )
-//                    }
-//                }
-
-//                Thread.sleep(3000)
-
                 verifyAudioPermissions()
                 createSpeechRecognizer()
 
@@ -167,6 +179,46 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     handleSpeechBegin()
                 }
             }
+        }
+
+        if (event?.sensor === accelerometer) {
+            lowPass(event.values, lastAccelerometer)
+            lastAccelerometerSet = true
+        } else if (event?.sensor === magnetometer) {
+            lowPass(event.values, lastMagnetometer)
+            lastMagnetometerSet = true
+        }
+
+        if (lastAccelerometerSet && lastMagnetometerSet) {
+            val r = FloatArray(9)
+            if (SensorManager.getRotationMatrix(r, null, lastAccelerometer, lastMagnetometer)) {
+                val orientation = FloatArray(3)
+                SensorManager.getOrientation(r, orientation)
+                val degree = (toDegrees(orientation[0].toDouble()) + 360).toFloat() % 360
+                currentDegree = degree
+            }
+        }
+
+        if (currentDegree >= 315 || currentDegree < 45) {
+            // North
+            compassDir = "N"
+        } else if (currentDegree >= 45 && currentDegree < 135) {
+            // East
+            compassDir = "E"
+        } else if (currentDegree >= 135 && currentDegree < 225) {
+            // South
+            compassDir = "S"
+        } else if (currentDegree >= 225 && currentDegree < 315) {
+            // West
+            compassDir = "W"
+        }
+        Log.i("Compass", "Direction: $compassDir")
+    }
+
+    fun lowPass(input: FloatArray, output: FloatArray) {
+        val alpha = 0.05f
+        for (i in input.indices) {
+            output[i] = output[i] + alpha * (input[i] - output[i])
         }
     }
 
@@ -388,13 +440,13 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                     // TODO - Process result from server
 
-//                    // Pair up the directions and locations
-//                    val navPoints = directions.zip(path)
-//
-//                    // Start at the first location
-//                    var currentLocation = path.first()
-//
-//                    // Navigate to the final destination
+                    // Pair up the directions and locations
+                    val navPoints = directions.zip(path)
+
+                    // Start at the first location
+                    var currentLocation = path.first()
+
+                    // Navigate to the final destination
 //                    for ((direction, location) in navPoints) {
 //                        when (direction) {
 //                            "left" -> {
@@ -479,6 +531,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         return parts[0] to parts[1]
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun sendRequest(startLoc: String, destLoc: String): JSONObject {
         return withContext(Dispatchers.IO) {
             Log.i("CHECK 2", "in fn")
@@ -519,4 +572,8 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
     }
+
+//    private fun isLeftTurn(currentLocation: String, location: String): Boolean {
+//
+//    }
 }
