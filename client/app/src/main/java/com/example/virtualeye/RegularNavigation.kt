@@ -5,13 +5,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -19,16 +12,25 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_GAME
+import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
+import android.view.View
 import android.view.animation.Animation.RELATIVE_TO_SELF
 import android.view.animation.RotateAnimation
-import android.widget.ImageView
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.lang.Math.toDegrees
+import java.util.*
 
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
 var selectedStart: String? = null
 var selectedDest: String? = null
+@SuppressLint("StaticFieldLeak")
 lateinit var image: ImageView
 lateinit var sensorManager: SensorManager
 lateinit var accelerometer: Sensor
@@ -38,6 +40,10 @@ var lastAccelerometer = FloatArray(3)
 var lastMagnetometer = FloatArray(3)
 var lastAccelerometerSet = false
 var lastMagnetometerSet = false
+var rssiVal: Int? = null
+var bleMAC: String? = null
+private lateinit var tts: TextToSpeech
+var tempVal: String? = null
 
 
 @Suppress("DEPRECATION")
@@ -117,6 +123,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                     "Software Lab 2" -> {
                         spinner_start.foreground = getDrawable(R.drawable.sw2_drp)
                     }
+                    "Hardware Projects Lab" -> {
+                        spinner_start.foreground = getDrawable(R.drawable.hwproj_drp)
+                    }
                 }
             }
 
@@ -155,6 +164,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                     "Software Lab 2" -> {
                         spinner_dest.foreground = getDrawable(R.drawable.sw2_drp)
                     }
+                    "Hardware Projects Lab" -> {
+                        spinner_dest.foreground = getDrawable(R.drawable.hwproj_drp)
+                    }
                 }
             }
 
@@ -165,7 +177,41 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        val timerBLE = Timer()
+        val timerBLETask = object: TimerTask() {
+            override fun run() {
+                // BLE Scanner Init
+                val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+                if (bluetoothAdapter == null) {
+                    // Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+
+                mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
+                mScanCallback = initCallbacks()
+                //println(mScanCallback.toString())
+                //println("mScanCallback")
+                mBluetoothLeScanner?.startScan(mScanCallback)
+            }
+        }
+        val timerBLECheck = Timer()
+        val timerBLECheckTask = object: TimerTask() {
+            override fun run() {
+                if(rssiVal != null && bleMAC != null){
+                    if(rssiVal!! > -70){
+                        if(bleMAC != tempVal){
+                            callTTS(bleMAC!!)
+                            tempVal = bleMAC
+                        }
+                    }
+                }
+            }
+        }
+
         button.setOnClickListener {
+
+            timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
+            timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
 
             // Change map based on selected values in drop down
             if(selectedStart != "NULL" && selectedDest != "NULL"){
@@ -386,19 +432,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                     Toast.makeText(this, "One or more values are NULL! Select a location from dropdown", Toast.LENGTH_LONG).show()
                 }
             }
-
-            // BLE Scanner Init
-            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-            if (bluetoothAdapter == null) {
-                Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-
-            mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
-            mScanCallback = initCallbacks()
-            //println(mScanCallback.toString())
-            //println("mScanCallback")
-            mBluetoothLeScanner?.startScan(mScanCallback)
         }
     }
 
@@ -473,8 +506,10 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                             Log.i("BLE NAME: ", result.device.name)
                             //println(result.device.name)
                             Log.i("BLE MAC: ", result.device.toString())
+                            bleMAC = result.device.toString()
                             //println(result.device)
                             Log.i("BLE RSSI: ", result.rssi.toString())
+                            rssiVal = result.rssi
                             //println(result.rssi)
                         }
                     }
@@ -483,4 +518,47 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
     }
+
+    private fun callTTS(input: String) {
+        val dictBLE: MutableMap<String, String> = mutableMapOf()
+        dictBLE["Cybercrime Analysis & Research Alliance @ NTU (CARA)"] = "E4:7E:DB:B2:0D:3C"
+        dictBLE["SCSE Student Lounge"] = "E3:2D:87:49:E5:BF"
+        dictBLE["Hardware Lab 1"] = "CF:BD:6D:B7:8E:7D"
+        dictBLE["Hardware Lab 2"] = "D8:3F:BB:F5:EF:5E"
+        dictBLE["Software Lab 1"] = "F1:C6:5F:C8:71:9D"
+        dictBLE["Software Lab 2"] = "D6:65:D2:8F:C5:8F"
+        dictBLE["Hardware Projects Lab"] = "E9:4E:48:02:C6:84"
+
+        if (dictBLE.containsValue(input)) {
+            val key = dictBLE.filter { it.value == input }.keys.first()
+            if(key == selectedDest){
+                tts = TextToSpeech(this) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        tts.setSpeechRate(0.95f)
+                        tts.speak(
+                            "You have arrived at your destination!", TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            null
+                        )
+                    }
+                }
+            }else{
+                tts = TextToSpeech(this) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        tts.setSpeechRate(0.95f)
+                        tts.speak(
+                            "You have arrived at$key", TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            null
+                        )
+                    }
+                }
+            }
+        }
+
+
+
+
+    }
+
 }
