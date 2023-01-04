@@ -26,7 +26,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical"
             android:padding="16dp"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,15 +68,15 @@
 
         <RelativeLayout
             android:id="@+id/activity_main"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_width="126dp"
+            android:layout_height="104dp"
             android:gravity="center"
             tools:context="de.neonew.compass.MainActivity">
 
             <ImageView
                 android:id="@+id/imageViewCompass"
-                android:layout_width="158dp"
-                android:layout_height="150dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_compass" />
@@ -86,12 +85,12 @@
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="255dp" />
+            android:layout_height="191dp" />
 
         <ImageView
             android:id="@+id/directions_view"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="268dp"
             app:srcCompat="@drawable/rounded_rect" />
 
     </LinearLayout>

@@ -47,6 +47,8 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.regular_navigation)
+        // Hide Action Bar - For UI purpose
+        supportActionBar?.hide()
 
         image = findViewById(R.id.imageViewCompass)
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -77,6 +79,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         val button = findViewById<ImageButton>(R.id.startScanButton)
         val imageView = findViewById<View>(R.id.imageView) as SubsamplingScaleImageView
         imageView.setImage(ImageSource.resource(R.drawable.scse_1_final))
+        val dirImage = findViewById<ImageView>(R.id.directions_view)
 
         val adapter_start = ArrayAdapter(this, android.R.layout.simple_spinner_item, start_loc)
         val adapter_dest = ArrayAdapter(this, android.R.layout.simple_spinner_item, dest_loc)
@@ -170,161 +173,209 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 // CARA -> Dest
                 if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_lounge))
+                    dirImage.setImageResource(R.drawable.dir_cara_lounge)
                 }
                 else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hw1))
+                    dirImage.setImageResource(R.drawable.dir_cara_hw1)
                 }
                 else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hw2))
+                    dirImage.setImageResource(R.drawable.dir_cara_hw2)
                 }
                 else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                    dirImage.setImageResource(R.drawable.dir_cara_sw1)
                 }
                 else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_sw2))
+                    dirImage.setImageResource(R.drawable.dir_cara_sw2)
                 }
                 else if(selectedStart == "Cybercrime Analysis & Research Alliance @ NTU (CARA)" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_cara_hwproj)
                 }
 
                 // SCSE Student Lounge -> Dest
                 if(selectedStart == "SCSE Student Lounge" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_lounge))
+                    dirImage.setImageResource(R.drawable.dir_lounge_cara)
                 }
                 else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_lounge))
+                    dirImage.setImageResource(R.drawable.dir_lounge_hw1)
                 }
                 else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_lounge))
+                    dirImage.setImageResource(R.drawable.dir_lounge_hw2)
                 }
                 else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                    dirImage.setImageResource(R.drawable.dir_lounge_sw1)
                 }
                 else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_sw2))
+                    dirImage.setImageResource(R.drawable.dir_lounge_sw2)
                 }
                 else if(selectedStart == "SCSE Student Lounge" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_lounge_hwproj)
                 }
 
                 // Software Lab 1 -> Dest
                 if(selectedStart == "Software Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_cara)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hw1)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hw2)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_lounge)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw1_sw2)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hwproj)
                 }
 
                 // Hardware Lab 1 -> Dest
                 if(selectedStart == "Hardware Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hw1))
+                    dirImage.setImageResource(R.drawable.dir_hw1_cara)
                 }
                 else if(selectedStart == "Hardware Lab 1" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_lounge))
+                    dirImage.setImageResource(R.drawable.dir_hw1_lounge)
                 }
                 else if(selectedStart == "Hardware Lab 1" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_hw2))
+                    dirImage.setImageResource(R.drawable.dir_hw1_hw2)
                 }
                 else if(selectedStart == "Hardware Lab 1" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                    dirImage.setImageResource(R.drawable.dir_hw1_sw1)
                 }
                 else if(selectedStart == "Hardware Lab 1" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_sw2))
+                    dirImage.setImageResource(R.drawable.dir_hw1_sw2)
                 }
                 else if(selectedStart == "Hardware Lab 1" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hw1_hwproj)
                 }
 
                 // Hardware Lab 2 -> Dest
                 if(selectedStart == "Hardware Lab 2" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hw2))
+                    dirImage.setImageResource(R.drawable.dir_hw2_cara)
                 }
                 else if(selectedStart == "Hardware Lab 2" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_lounge))
+                    dirImage.setImageResource(R.drawable.dir_hw2_lounge)
                 }
                 else if(selectedStart == "Hardware Lab 2" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_hw2))
+                    dirImage.setImageResource(R.drawable.dir_hw2_hw1)
                 }
                 else if(selectedStart == "Hardware Lab 2" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                    dirImage.setImageResource(R.drawable.dir_hw2_sw1)
                 }
                 else if(selectedStart == "Hardware Lab 2" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_sw2))
+                    dirImage.setImageResource(R.drawable.dir_hw2_sw2)
                 }
                 else if(selectedStart == "Hardware Lab 2" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hw2_hwproj)
                 }
 
                 // Software Lab 1 -> Dest
                 if(selectedStart == "Software Lab 1" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_cara)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_lounge)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hw1)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_sw1))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hw2)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw1_sw2)
                 }
                 else if(selectedStart == "Software Lab 1" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_sw1_hwproj)
                 }
 
                 // Software Lab 2 -> Dest
                 if(selectedStart == "Software Lab 2" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw2_cara)
                 }
                 else if(selectedStart == "Software Lab 2" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw2_lounge)
                 }
                 else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw2_hw1)
                 }
                 else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw2_hw2)
                 }
                 else if(selectedStart == "Software Lab 2" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_sw2))
+                    dirImage.setImageResource(R.drawable.dir_sw2_sw1)
                 }
                 else if(selectedStart == "Software Lab 2" && selectedDest == "Hardware Projects Lab"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw2_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_sw2_hwproj)
                 }
 
                 // Hardware Projects Lab -> Dest
                 if(selectedStart == "Hardware Projects Lab" && selectedDest == "Cybercrime Analysis & Research Alliance @ NTU (CARA)"){
                     imageView.setImage(ImageSource.resource(R.drawable.cara_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_cara)
                 }
                 else if(selectedStart == "Hardware Projects Lab" && selectedDest == "SCSE Student Lounge"){
                     imageView.setImage(ImageSource.resource(R.drawable.lounge_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_lounge)
                 }
                 else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Hardware Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw1_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_hw1)
                 }
                 else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Hardware Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.hw2_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_hw2)
                 }
                 else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Software Lab 1"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw1_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_sw1)
                 }
                 else if(selectedStart == "Hardware Projects Lab" && selectedDest == "Software Lab 2"){
                     imageView.setImage(ImageSource.resource(R.drawable.sw2_hwproj))
+                    dirImage.setImageResource(R.drawable.dir_hwproj_sw2)
                 }
             }
             else{
