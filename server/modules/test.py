@@ -41,7 +41,7 @@ def shortest_path(graph, start, end):
   return None
 
 # Find the shortest path between nodes A and G
-shortest_path = shortest_path(graph, "cara", "hw_proj")
+shortest_path = shortest_path(graph, "hw2", "hw_proj")
 
 # Print the shortest path with the edges traversed
 print("Shortest path:", shortest_path)
@@ -50,4 +50,3 @@ for i in range(len(shortest_path)-1):
   print(f"{shortest_path[i]} to {shortest_path[i+1]}: {graph[shortest_path[i]][shortest_path[i+1]]}")
   directions.append(graph[shortest_path[i]][shortest_path[i+1]])
 
-print(jsonify({"path": shortest_path, "dir": directions}))

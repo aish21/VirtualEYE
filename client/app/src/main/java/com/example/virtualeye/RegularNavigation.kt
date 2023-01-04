@@ -12,40 +12,67 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import android.hardware.Sensor
+import android.hardware.Sensor.TYPE_ACCELEROMETER
+import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.hardware.SensorManager.SENSOR_DELAY_GAME
+import android.view.animation.Animation.RELATIVE_TO_SELF
+import android.view.animation.RotateAnimation
+import android.widget.ImageView
+import java.lang.Math.toDegrees
 
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
 var selectedStart: String? = null
 var selectedDest: String? = null
+lateinit var image: ImageView
+lateinit var sensorManager: SensorManager
+lateinit var accelerometer: Sensor
+lateinit var magnetometer: Sensor
+var currentDegree = 0.0f
+var lastAccelerometer = FloatArray(3)
+var lastMagnetometer = FloatArray(3)
+var lastAccelerometerSet = false
+var lastMagnetometerSet = false
+
 
 @Suppress("DEPRECATION")
-class RegularNavigation : AppCompatActivity() {
+class RegularNavigation : AppCompatActivity(), SensorEventListener {
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.regular_navigation)
 
+        image = findViewById(R.id.imageViewCompass)
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
+        magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
+
         val spinner_start: Spinner = findViewById(R.id.start_point)
         val spinner_dest: Spinner = findViewById(R.id.destination)
 
         val start_loc = listOf("NULL",
-                                "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
-                                "SCSE Student Lounge",
-                                "Hardware Lab 1",
-                                "Hardware Lab 2",
-                                "Software Lab 1",
-                                "Software Lab 2",
-                                "Hardware Projects Lab")
+            "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+            "SCSE Student Lounge",
+            "Hardware Lab 1",
+            "Hardware Lab 2",
+            "Software Lab 1",
+            "Software Lab 2",
+            "Hardware Projects Lab")
 
         val dest_loc = listOf("NULL",
-                                "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
-                                "SCSE Student Lounge",
-                                "Hardware Lab 1",
-                                "Hardware Lab 2",
-                                "Software Lab 1",
-                                "Software Lab 2",
-                                "Hardware Projects Lab")
+            "Cybercrime Analysis & Research Alliance @ NTU (CARA)",
+            "SCSE Student Lounge",
+            "Hardware Lab 1",
+            "Hardware Lab 2",
+            "Software Lab 1",
+            "Software Lab 2",
+            "Hardware Projects Lab")
 
         val button = findViewById<ImageButton>(R.id.startScanButton)
         val imageView = findViewById<View>(R.id.imageView) as SubsamplingScaleImageView
@@ -324,6 +351,58 @@ class RegularNavigation : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, accelerometer, SENSOR_DELAY_GAME)
+        sensorManager.registerListener(this, magnetometer, SENSOR_DELAY_GAME)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.unregisterListener(this, magnetometer)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor === accelerometer) {
+            lowPass(event.values, lastAccelerometer)
+            lastAccelerometerSet = true
+        } else if (event.sensor === magnetometer) {
+            lowPass(event.values, lastMagnetometer)
+            lastMagnetometerSet = true
+        }
+
+        if (lastAccelerometerSet && lastMagnetometerSet) {
+            val r = FloatArray(9)
+            if (SensorManager.getRotationMatrix(r, null, lastAccelerometer, lastMagnetometer)) {
+                val orientation = FloatArray(3)
+                SensorManager.getOrientation(r, orientation)
+                val degree = (toDegrees(orientation[0].toDouble()) + 360).toFloat() % 360
+
+                val rotateAnimation = RotateAnimation(
+                    currentDegree,
+                    -degree,
+                    RELATIVE_TO_SELF, 0.5f,
+                    RELATIVE_TO_SELF, 0.5f)
+                rotateAnimation.duration = 1000
+                rotateAnimation.fillAfter = true
+
+                image.startAnimation(rotateAnimation)
+                currentDegree = -degree
+            }
+        }
+    }
+
+    private fun lowPass(input: FloatArray, output: FloatArray) {
+        val alpha = 0.05f
+
+        for (i in input.indices) {
+            output[i] = output[i] + alpha * (input[i] - output[i])
+        }
+    }
+
     private fun initCallbacks(): ScanCallback {
         val name1 = "FCL Beacon1"
         val name2 = "FWM8BLZ02"
@@ -346,12 +425,6 @@ class RegularNavigation : AppCompatActivity() {
                             //println(result.device)
                             Log.i("BLE RSSI: ", result.rssi.toString())
                             //println(result.rssi)
-
-                            //val calcMyRes = (-0.113 * result.rssi.toFloat())  - 61.1
-                            //val calcNotMyRes = 10.0.pow((((-77.0 - result.rssi.toFloat()) / (10 * 2))))
-
-                            //myRes.text = result.rssi.toString()
-                            //notMyRes.text = calcNotMyRes.toString()
                         }
                     }
                 }
