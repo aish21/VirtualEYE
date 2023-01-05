@@ -467,8 +467,14 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                             Globals.directions.add(directionsTemp.get(i) as String)
                         }
 
+                        val bearingsTemp = respJSON.getJSONArray("bearings")
+                        for (i in 0 until bearingsTemp.length()) {
+                            Globals.bearings.add(bearingsTemp.get(i) as String)
+                        }
+
                         println(Globals.path)
                         println(Globals.directions)
+                        println(Globals.bearings)
                     }
 
                     val intentBlindNav = Intent(this, BlindNav::class.java)

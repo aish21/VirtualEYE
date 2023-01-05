@@ -1,5 +1,6 @@
 package com.example.virtualeye
 
+// Imports
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.ScanCallback
@@ -23,13 +24,19 @@ import java.util.*
 
 class BlindNav : AppCompatActivity(), SensorEventListener {
 
-    // Imports
+    // Variable Declaration
     private lateinit var sensorManager: SensorManager
     var compassDir: String? = null
     private lateinit var tts: TextToSpeech
     var rssiVal: Int? = null
     var bleMAC: String? = null
     var tempVal: String? = null
+    var currentLoc: String? = null
+    var currentDir: String? = null
+    var currentBearing: String? = null
+    var correctBearing = false
+    var toSay: String? = null
+    var callNavInit = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,8 +81,30 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        val timerCallNavInit = Timer()
+        val timerCallNavInitTask = object: TimerTask() {
+            override fun run() {
+                if(callNavInit){
+                    if(Globals.path.isNotEmpty()) {
+                        Globals.path.removeAt(0)
+                    }
+                    if(Globals.directions.isNotEmpty()) {
+                        Globals.directions.removeAt(0)
+                    }
+                    if(Globals.bearings.isNotEmpty()) {
+                        Globals.bearings.removeAt(0)
+                    }
+                    callNavInit = false
+                    navInit()
+                }
+            }
+        }
+
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
         timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
+        timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 2000)
+
+        navInit()
     }
 
     // Functions to support the working of sensors
@@ -127,6 +156,26 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             compassDir = "W"
         }
         Log.i("Compass", "Direction: $compassDir")
+
+        if(currentBearing != null){
+            if(currentBearing != compassDir){
+                correctBearing = false
+
+                tts = TextToSpeech(this) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        tts.setSpeechRate(0.95f)
+                        tts.speak(
+                            "Heading the wrong way! Phone will vibrate towards correct direction!", TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            null
+                        )
+                    }
+                }
+            }else{
+                correctBearing = true
+                vibratePhone()
+            }
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -193,20 +242,20 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         dictBLE["Software Lab 2"] = "D6:65:D2:8F:C5:8F"
         dictBLE["Hardware Projects Lab"] = "E9:4E:48:02:C6:84"
 
+        val tempDict: MutableMap<String, String> = mutableMapOf()
+        tempDict["Cybercrime Analysis & Research Alliance @ NTU (CARA)"] = "cara"
+        tempDict["SCSE Student Lounge"] = "student lounge"
+        tempDict["Hardware Lab 1"] = "hardware lab 1"
+        tempDict["Hardware Lab 2"] = "hardware lab 2"
+        tempDict["Software Lab 1"] = "software lab 1"
+        tempDict["Software Lab 2"] = "software lab 2"
+        tempDict["Hardware Projects Lab"] = "hardware projects lab"
+
         if (dictBLE.containsValue(input)) {
             val key = dictBLE.filter { it.value == input }.keys.first()
-            if (key == selectedDest) {
-                tts = TextToSpeech(this) {
-                    if (it == TextToSpeech.SUCCESS) {
-                        tts.setSpeechRate(0.95f)
-                        tts.speak(
-                            "You have arrived at your destination!", TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            null
-                        )
-                    }
-                }
-            } else {
+            val loc = tempDict[key]
+
+            if(loc == currentLoc) {
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
                         tts.setSpeechRate(0.95f)
@@ -217,11 +266,69 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
+                if(!callNavInit) {
+                    callNavInit = true
+                }
             }
+        }
+    }
+
+    private fun checkInitBear(): Boolean {
+        return if(Globals.initBearing == compassDir){
+            vibratePhone()
+            true
+        } else{
+            false
         }
     }
 
     private fun navInit(){
 
+        if(!checkInitBear()) {
+            tts = TextToSpeech(this) {
+                if (it == TextToSpeech.SUCCESS) {
+                    tts.setSpeechRate(0.95f)
+                    tts.speak(
+                        "You are facing the wrong direction! Turn until phone vibrates",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
+            }
+            checkInitBear() // or call navInit again if the thing hangs
+        }
+
+        currentLoc = Globals.path[0]
+        tts = TextToSpeech(this) {
+            if (it == TextToSpeech.SUCCESS) {
+                tts.setSpeechRate(0.95f)
+                tts.speak(
+                    "Heading towards checkpoint $currentLoc",
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    null
+                )
+            }
+        }
+
+        currentDir = Globals.directions[0]
+        toSay = if(currentDir == "straight"){
+            "Head straight towards"
+        } else{
+            "Turn $currentDir towards"
+        }
+        tts = TextToSpeech(this) {
+            if (it == TextToSpeech.SUCCESS) {
+                tts.setSpeechRate(0.95f)
+                tts.speak(
+                    toSay + currentLoc,
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    null
+                )
+            }
+        }
+        currentBearing = Globals.bearings[0]
     }
 }
