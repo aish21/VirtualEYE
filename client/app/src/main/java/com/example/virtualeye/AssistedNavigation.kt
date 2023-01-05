@@ -2,24 +2,14 @@ package com.example.virtualeye
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
-import android.hardware.Sensor.TYPE_ACCELEROMETER
-import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.hardware.SensorManager.SENSOR_DELAY_GAME
-import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -46,7 +36,6 @@ import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.lang.Math.toDegrees
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -62,19 +51,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private var mIsListening = false
     val startList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
     val destList = listOf("cara", "student lounge", "hardware lab 1", "hardware lab 2", "software lab 1", "software lab 2", "hardware projects lab")
-    var mBluetoothLeScanner: BluetoothLeScanner? = null
-    var mScanCallback: ScanCallback? = null
-    var BLEScanMac: String? = null
-    var path = mutableListOf<String>()
-    var directions = mutableListOf<String>()
-    var compassDir: String? = null
-    lateinit var accelerometer: Sensor
-    lateinit var magnetometer: Sensor
-    var currentDegree = 0.0f
-    var lastAccelerometer = FloatArray(3)
-    var lastMagnetometer = FloatArray(3)
-    var lastAccelerometerSet = false
-    var lastMagnetometerSet = false
 
     companion object {
         // This constant is needed to verify the audio permission result
@@ -147,12 +123,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
             //  If the acceleration is greater than 2, it indicates that the phone has been shaken
             if (acceleration > 2) {
-
-//                GlobalScope.launch {
-//                    // start a new coroutine in background and continue
-//                    val result = async {  }.await()
-//                    println("Result: $result")
-//                }
 
                 if(tts.isSpeaking){
                     tts.stop()
@@ -479,100 +449,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                     val intentBlindNav = Intent(this, BlindNav::class.java)
                     startActivity(intentBlindNav)
-
-                    // TODO - Process result from server
-
-                    // Pair up the directions and locations
-                    val navPoints = directions.zip(path)
-
-                    // Start at the first location
-                    var currentLocation = path.first()
-
-                    // Navigate to the final destination - add while true before when and break
-//                    for ((direction, location) in navPoints) {
-//                        while (true) {
-//                            when (direction) {
-//                                "left" -> {
-//                                    // Check if the user has truly turned left
-//                                    if (isLeftTurn(currentLocation, location)) {
-//
-//                                        tts = TextToSpeech(this) {
-//                                            if (it == TextToSpeech.SUCCESS) {
-//                                                tts.setSpeechRate(0.95f)
-//                                                tts.speak(
-//                                                    "In 2 metres, turn left and continue straight!",
-//                                                    TextToSpeech.QUEUE_FLUSH,
-//                                                    null,
-//                                                    null
-//                                                )
-//                                            }
-//                                        }
-//
-//                                        // Update the current location
-//                                        currentLocation = location
-//                                        break
-//                                    } else {
-//                                        // The user didn't turn left, display an error message
-//                                        tts = TextToSpeech(this) {
-//                                            if (it == TextToSpeech.SUCCESS) {
-//                                                tts.setSpeechRate(0.95f)
-//                                                tts.speak(
-//                                                    "Facing the wrong way!",
-//                                                    TextToSpeech.QUEUE_FLUSH,
-//                                                    null,
-//                                                    null
-//                                                )
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                "right" -> {
-//                                    // Check if the user has truly turned right
-//                                    if (isRightTurn(currentLocation, location)) {
-//
-//                                        tts = TextToSpeech(this) {
-//                                            if (it == TextToSpeech.SUCCESS) {
-//                                                tts.setSpeechRate(0.95f)
-//                                                tts.speak(
-//                                                    "In 2 metres, turn left and continue straight!",
-//                                                    TextToSpeech.QUEUE_FLUSH,
-//                                                    null,
-//                                                    null
-//                                                )
-//                                            }
-//                                        }
-//
-//                                        // Update the current location
-//                                        currentLocation = location
-//                                        break
-//                                    } else {
-//                                        // The user didn't turn right, display an error message
-//                                        tts = TextToSpeech(this) {
-//                                            if (it == TextToSpeech.SUCCESS) {
-//                                                tts.setSpeechRate(0.95f)
-//                                                tts.speak(
-//                                                    "Facing the wrong way!",
-//                                                    TextToSpeech.QUEUE_FLUSH,
-//                                                    null,
-//                                                    null
-//                                                )
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                "straight" -> {
-//                                    // Check if the user went straight
-//                                    if (isStraight(currentLocation, location)) {
-//                                        // Update the current location
-//                                        currentLocation = location
-//                                    } else {
-//                                        // The user didn't go straight, display an error message
-//                                        println("Error: You didn't go straight!")
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
                 }
                 else{
                     tts = TextToSpeech(this) {
