@@ -87,7 +87,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
 
-
         welcomeMsg_tts = TextToSpeech(this) {
             if (it == TextToSpeech.SUCCESS) {
                 welcomeMsg_tts.setSpeechRate(0.95f)

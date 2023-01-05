@@ -39,6 +39,7 @@
         </activity>
         <activity android:name=".AssistedNavigation" />
         <activity android:name=".RegularNavigation" />
+        <activity android:name=".BlindNav"/>
     </application>
 
 </manifest>
