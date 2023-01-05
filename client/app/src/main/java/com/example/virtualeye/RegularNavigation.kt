@@ -555,10 +555,5 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
         }
-
-
-
-
     }
-
 }

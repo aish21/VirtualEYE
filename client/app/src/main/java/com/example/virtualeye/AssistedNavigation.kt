@@ -57,8 +57,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     private lateinit var objectDetector: ObjectDetector
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var tts: TextToSpeech
-    private lateinit var setPoints: TextToSpeech
-    private lateinit var sensorManager: SensorManager
     private lateinit var sensorManager2: SensorManager
     private var mSpeechRecognizer: SpeechRecognizer? = null
     private var mIsListening = false
@@ -100,10 +98,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         // Init Sensor Manager
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensorManager2 = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
-        magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
 
         binding = DataBindingUtil.setContentView(this, R.layout.assisted_navigation)
 
@@ -133,15 +128,10 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
         sensorManager2.registerListener(this,
             sensorManager2.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_NORMAL)
-        sensorManager.registerListener(this, accelerometer, SENSOR_DELAY_GAME)
-        sensorManager.registerListener(this, magnetometer, SENSOR_DELAY_GAME)
     }
 
     override fun onPause() {
         super.onPause()
-//        sensorManager.unregisterListener(this)
-        sensorManager.unregisterListener(this, accelerometer)
-        sensorManager.unregisterListener(this, magnetometer)
         sensorManager2.unregisterListener(this)
     }
 
@@ -179,49 +169,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     handleSpeechBegin()
                 }
             }
-        }
-
-        if (event?.sensor === accelerometer) {
-            lowPass(event.values, lastAccelerometer)
-            lastAccelerometerSet = true
-        } else if (event?.sensor === magnetometer) {
-            lowPass(event.values, lastMagnetometer)
-            lastMagnetometerSet = true
-        }
-
-        if (lastAccelerometerSet && lastMagnetometerSet) {
-            val r = FloatArray(9)
-            if (SensorManager.getRotationMatrix(r, null, lastAccelerometer, lastMagnetometer)) {
-                val orientation = FloatArray(3)
-                SensorManager.getOrientation(r, orientation)
-                val degree = (toDegrees(orientation[0].toDouble()) + 360).toFloat() % 360
-                currentDegree = degree
-            }
-        }
-
-        if (currentDegree >= 315 || currentDegree < 45) {
-            // North
-            compassDir = "N"
-
-        } else if (currentDegree >= 45 && currentDegree < 135) {
-            // East
-            compassDir = "E"
-
-        } else if (currentDegree >= 135 && currentDegree < 225) {
-            // South
-            compassDir = "S"
-
-        } else if (currentDegree >= 225 && currentDegree < 315) {
-            // West
-            compassDir = "W"
-        }
-        Log.i("Compass", "Direction: $compassDir")
-    }
-
-    private fun lowPass(input: FloatArray, output: FloatArray) {
-        val alpha = 0.05f
-        for (i in input.indices) {
-            output[i] = output[i] + alpha * (input[i] - output[i])
         }
     }
 
@@ -393,13 +340,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             if (startList.contains(startPoint)){
                 if (destList.contains(destLoc)){
 
-                    // BLE Scanner Init
-                    val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-                    if (bluetoothAdapter == null) {
-                        Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-
                     tts = TextToSpeech(this) {
                         if (it == TextToSpeech.SUCCESS) {
                             tts.setSpeechRate(0.95f)
@@ -412,6 +352,104 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                         }
                     }
 
+                    if(startPoint == "cara" && destLoc == "student lounge"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "cara" && destLoc == "software lab 1"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "cara" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "cara" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "cara" && destLoc == "software lab 2"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "cara" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "S"
+                    }
+
+                    else if(startPoint == "student lounge" && destLoc == "cara"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "student lounge" && destLoc == "software lab 1"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "student lounge" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "student lounge" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "student lounge" && destLoc == "software lab 2"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "student lounge" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "E"
+                    }
+
+                    else if(startPoint == "software lab 1" && destLoc == "student lounge"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "software lab 1" && destLoc == "cara"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "software lab 1" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "software lab 1" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "software lab 1" && destLoc == "software lab 2"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "software lab 1" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "E"
+                    }
+
+                    else if(startPoint == "hardware lab 1" && destLoc == "student lounge"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "hardware lab 1" && destLoc == "software lab 1"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "hardware lab 1" && destLoc == "cara"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "hardware lab 1" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "hardware lab 1" && destLoc == "software lab 2"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "hardware lab 1" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "S"
+                    }
+
+                    else if(startPoint == "hardware lab 2" && destLoc == "student lounge"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware lab 2" && destLoc == "software lab 1"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware lab 2" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware lab 2" && destLoc == "cara"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware lab 2" && destLoc == "software lab 2"){
+                        Globals.initBearing = "E"
+                    }else if (startPoint == "hardware lab 2" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "E"
+                    }
+
+                    else if(startPoint == "software lab 2" && destLoc == "student lounge"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "software lab 2" && destLoc == "software lab 1"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "software lab 2" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "software lab 2" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "software lab 2" && destLoc == "cara"){
+                        Globals.initBearing = "S"
+                    }else if (startPoint == "software lab 2" && destLoc == "hardware projects lab"){
+                        Globals.initBearing = "S"
+                    }
+
+                    else if(startPoint == "hardware projects lab" && destLoc == "student lounge"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware projects lab" && destLoc == "software lab 1"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware projects lab" && destLoc == "hardware lab 1"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware projects lab" && destLoc == "hardware lab 2"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware projects lab" && destLoc == "software lab 2"){
+                        Globals.initBearing = "W"
+                    }else if (startPoint == "hardware projects lab" && destLoc == "cara"){
+                        Globals.initBearing = "W"
+                    }
+
                     // Send the start and dest to server
                     GlobalScope.launch {
                         Log.i("Check", "HERE")
@@ -421,25 +459,20 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
                         val pathTemp = respJSON.getJSONArray("path")
                         for (i in 0 until pathTemp.length()) {
-                            path.add(pathTemp.get(i) as String)
+                            Globals.path.add(pathTemp.get(i) as String)
                         }
 
                         val directionsTemp = respJSON.getJSONArray("directions")
                         for (i in 0 until directionsTemp.length()) {
-                            directions.add(directionsTemp.get(i) as String)
+                            Globals.directions.add(directionsTemp.get(i) as String)
                         }
 
-                        println(path)
-                        println(path::class)
-                        println(directions)
-                        println(directions::class)
+                        println(Globals.path)
+                        println(Globals.directions)
                     }
-                    //job.cancel()
 
-                    // Start BLE scan
-                    mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
-                    mScanCallback = initCallbacks()
-                    mBluetoothLeScanner?.startScan(mScanCallback)
+                    val intentBlindNav = Intent(this, BlindNav::class.java)
+                    startActivity(intentBlindNav)
 
                     // TODO - Process result from server
 
@@ -593,51 +626,4 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
         }
     }
-
-    private fun initCallbacks(): ScanCallback {
-        val name1 = "FCL Beacon1"
-        val name2 = "FWM8BLZ02"
-
-        return object : ScanCallback() {
-            @SuppressLint("MissingPermission", "NewApi")
-            override fun onScanResult(
-                callbackType: Int,
-                result: ScanResult
-            ) {
-                super.onScanResult(callbackType, result)
-
-                if (result.device != null) {
-                    if(result.device.name != null) {
-                        //addDevice(result.getDevice(), result.getRssi());
-                        if(result.device.name.equals(name1) or result.device.name.equals(name2)) {
-                            Log.i("BLE NAME: ", result.device.name)
-                            //println(result.device.name)
-                            Log.i("BLE MAC: ", result.device.toString())
-                            BLEScanMac = result.device.toString()
-                            //println(result.device)
-                            Log.i("BLE RSSI: ", result.rssi.toString())
-                            //println(result.rssi)
-                        }
-                    }
-                }
-                return
-            }
-        }
-    }
-
-//    private fun isLeftTurn(currentLocation: String, location: String): Boolean {
-//
-//        if(currentLocation == "cara" && location == "student lounge"){
-//            println(compassDir)
-//            return compassDir == "N"
-//        }
-//    }
-//
-//    private fun isRightTurn(currentLocation: String, location: String): Boolean {
-//
-//        if(currentLocation == "cara" && location == "student lounge"){
-//            println(compassDir)
-//            return compassDir == "N"
-//        }
-//    }
 }
