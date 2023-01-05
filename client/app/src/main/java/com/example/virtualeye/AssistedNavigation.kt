@@ -53,10 +53,10 @@ import java.net.URL
 class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
     private lateinit var binding: AssistedNavigationBinding
+    private lateinit var welcomeMsg_tts: TextToSpeech
     private lateinit var objectDetector: ObjectDetector
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var tts: TextToSpeech
-    private lateinit var welcomeMsg_tts: TextToSpeech
     private lateinit var setPoints: TextToSpeech
     private lateinit var sensorManager: SensorManager
     private lateinit var sensorManager2: SensorManager
@@ -164,20 +164,20 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 //                    println("Result: $result")
 //                }
 
-//                if(tts.isSpeaking){
-//                    tts.stop()
-//                }
-//                verifyAudioPermissions()
-//                createSpeechRecognizer()
-//
-//                if (mIsListening) {
-//                    handleSpeechEnd()
-//                } else {
-//                    if(tts.isSpeaking){
-//                        tts.stop()
-//                    }
-//                    handleSpeechBegin()
-//                }
+                if(tts.isSpeaking){
+                    tts.stop()
+                }
+                verifyAudioPermissions()
+                createSpeechRecognizer()
+
+                if (mIsListening) {
+                    handleSpeechEnd()
+                } else {
+                    if(tts.isSpeaking){
+                        tts.stop()
+                    }
+                    handleSpeechBegin()
+                }
             }
         }
 
@@ -591,17 +591,6 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             Log.i("CHECK 3", "aft req")
             request.requestMethod = "POST"
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
-        }
-    }
-
-    private fun vibratePhone() {
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (vibrator.hasVibrator()) { // Vibrator availability checking
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE)) // New vibrate method for API Level 26 or higher
-            } else {
-                vibrator.vibrate(1000) // Vibrate method for below API Level 26
-            }
         }
     }
 
