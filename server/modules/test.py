@@ -1,17 +1,16 @@
-import jsonify
-
 # Create an empty dictionary to store the edges and their labels
 graph = {}
 directions = []
+bearings = []
 
 # Add edges to the graph with custom labels
-graph["cara"] = {"lounge": "left"}
-graph["lounge"] = {"cara": "right", "sw1": "straight"}
-graph["sw1"] = {"lounge": "straight", "hw1": "left", "hw2": "straight"}
-graph["hw1"] = {"sw1": "right", "hw2": "left"}
-graph["hw2"] = {"hw1": "right", "sw2": "left", "sw1": "straight", "hw_proj": "straight"}
-graph["sw2"] = {"hw2": "right", "hw_proj": "left"}
-graph["hw_proj"] = {"sw2": "right", "hw2": "straight"}
+graph["cara"] = {"lounge": "left/E"}
+graph["lounge"] = {"cara": "right/N", "sw1": "straight/E"}
+graph["sw1"] = {"lounge": "straight/W", "hw1": "left/N", "hw2": "straight/E"}
+graph["hw1"] = {"sw1": "right/W", "hw2": "left/E"}
+graph["hw2"] = {"hw1": "right/N", "sw2": "left/N", "sw1": "straight/W", "hw_proj": "straight/E"}
+graph["sw2"] = {"hw2": "right/W", "hw_proj": "left/E"}
+graph["hw_proj"] = {"sw2": "right/N", "hw2": "straight/W"}
 
 # Function to find the shortest path between two nodes using breadth-first search
 def shortest_path(graph, start, end):
@@ -41,7 +40,7 @@ def shortest_path(graph, start, end):
   return None
 
 # Find the shortest path between nodes A and G
-shortest_path = shortest_path(graph, "hw2", "hw_proj")
+shortest_path = shortest_path(graph, "cara", "hw_proj")
 
 # Print the shortest path with the edges traversed
 print("Shortest path:", shortest_path)
@@ -50,3 +49,7 @@ for i in range(len(shortest_path)-1):
   print(f"{shortest_path[i]} to {shortest_path[i+1]}: {graph[shortest_path[i]][shortest_path[i+1]]}")
   directions.append(graph[shortest_path[i]][shortest_path[i+1]])
 
+
+bearings = [item.split('/')[1] for item in directions]
+
+print(bearings)

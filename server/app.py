@@ -2,8 +2,6 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
-import time
-import requests
 
 # Module Imports
 import modules.pathCalc as pathCalc
@@ -12,13 +10,13 @@ import modules.pathCalc as pathCalc
 graph = {}
 
 # Add edges to the graph with custom labels
-graph["cara"] = {"student lounge": "left"}
-graph["student lounge"] = {"cara": "right", "software lab 1": "straight"}
-graph["software lab 1"] = {"student lounge": "straight", "hardware lab 1": "left", "hardware lab 2": "straight"}
-graph["hardware lab 1"] = {"software lab 1": "right", "hardware lab 2": "left"}
-graph["hardware lab 2"] = {"hardware lab 1": "right", "software lab 2": "left", "software lab 1": "straight", "hardware projects lab": "straight"}
-graph["software lab 2"] = {"hardware lab 2": "right", "hardware projects lab": "left"}
-graph["hardware projects lab"] = {"software lab 2": "right", "hardware lab 2": "straight"}
+graph["cara"] = {"student lounge": "left/E"}
+graph["student lounge"] = {"cara": "right/N", "software lab 1": "straight/E"}
+graph["software lab 1"] = {"student lounge": "straight/W", "hardware lab 1": "left/N", "hardware lab 2": "straight/E"}
+graph["hardware lab 1"] = {"software lab 1": "right/W", "hardware lab 2": "left/E"}
+graph["hardware lab 2"] = {"hardware lab 1": "right/N", "software lab 2": "left/N", "software lab 1": "straight/W", "hardware projects lab": "straight/E"}
+graph["software lab 2"] = {"hardware lab 2": "right/W", "hardware projects lab": "left/E"}
+graph["hardware projects lab"] = {"software lab 2": "right/N", "hardware lab 2": "straight/W"}
 
 app = Flask(__name__)
 
@@ -34,6 +32,7 @@ def process1():
     print(start_loc)
     print(dest_loc)
     directions = []
+    bearings = []
 
     shortest_path = pathCalc.shortest_path(graph, start_loc, dest_loc)
     shortest_path.pop(0)
@@ -41,7 +40,9 @@ def process1():
     for i in range(len(shortest_path)-1):
         directions.append(graph[shortest_path[i]][shortest_path[i+1]])
     
-    return jsonify({"path": shortest_path, "directions": directions}) 
+    bearings = [item.split('/')[1] for item in directions]
+    
+    return jsonify({"path": shortest_path, "directions": directions, "bearings": bearings}) 
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
