@@ -241,7 +241,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 val filters = mutableListOf(filter1, filter2)
 
                 mBluetoothLeScanner?.startScan(filters, settings, mScanCallback)
-                println("here")
             }
         }
         val timerBLECheck = Timer()
@@ -249,11 +248,8 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             override fun run() {
 
                 if(rssiVal != null && bleMAC != null){
-                    println("here2")
-                    if(rssiVal!! > -65){
-                        println("here3")
+                    if(rssiVal!! > -75){
                         if(bleMAC != tempVal){
-                            println("here4")
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
                         }
@@ -603,7 +599,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         if (dictBLE.containsValue(input)) {
             val key = dictBLE.filter { it.value == input }.keys.first()
             if(key == selectedDest){
-                println("here5")
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
                         tts.setSpeechRate(0.95f)

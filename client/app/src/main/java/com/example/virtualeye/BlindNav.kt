@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.virtualeye
 
 // Imports
@@ -9,7 +11,6 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color.red
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -22,7 +23,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -90,7 +90,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         val timerBLECheckTask = object: TimerTask() {
             override fun run() {
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -65){
+                    if(rssiVal!! > -75){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -140,7 +140,6 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        val linearLayout = findViewById<LinearLayout>(R.id.bg)
         if (event?.sensor === accelerometer) {
             lowPass(event.values, lastAccelerometer)
             lastAccelerometerSet = true
@@ -180,11 +179,9 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         if(currentBearing != null){
             if(currentBearing != compassDir){
                 correctBearing = false
-                linearLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
             }else{
                 correctBearing = true
                 vibratePhone()
-                linearLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
             }
         }
     }
