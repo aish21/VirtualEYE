@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val regular_nav_bt = findViewById<ImageButton>(R.id.regular_navigation_bt)
         regular_nav_bt.setOnClickListener{
             val intent_regular_nav_bt = Intent(this, RegularNavigation::class.java)
+            tts.shutdown()
             startActivity(intent_regular_nav_bt)
         }
 
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val assisted_nav_bt = findViewById<ImageButton>(R.id.asst_nav_bt)
         assisted_nav_bt.setOnClickListener{
             val intent_assisted_nav_bt = Intent(this, AssistedNavigation::class.java)
+            tts.shutdown()
             startActivity(intent_assisted_nav_bt)
         }
     }
@@ -78,6 +80,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if (acceleration > 2) {
                 // Move to the assisted navigation screen here
                 val intent = Intent(this, AssistedNavigation::class.java)
+                tts.shutdown()
                 startActivity(intent)
             }
         }
