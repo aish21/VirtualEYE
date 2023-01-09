@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.*
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -622,5 +623,12 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        finish()
+        val goBackHome = Intent(this, MainActivity::class.java)
+        tts.shutdown()
+        startActivity(goBackHome)
     }
 }

@@ -347,4 +347,11 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         currentBearing = Globals.bearings[0]
         println(currentBearing)
     }
+
+    override fun onBackPressed() {
+        finish()
+        val goBackHome = Intent(this, AssistedNavigation::class.java)
+        tts.shutdown()
+        startActivity(goBackHome)
+    }
 }

@@ -509,4 +509,12 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
         }
     }
+
+    override fun onBackPressed() {
+        finish()
+        val goBackHome = Intent(this, MainActivity::class.java)
+        welcomeMsg_tts.shutdown()
+        tts.shutdown()
+        startActivity(goBackHome)
+    }
 }
