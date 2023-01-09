@@ -4,9 +4,12 @@ package com.example.virtualeye
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color.red
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -22,6 +25,7 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import java.util.*
 
 
@@ -65,16 +69,28 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
 
                 mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
                 mScanCallback = initCallbacks()
-                //println(mScanCallback.toString())
-                //println("mScanCallback")
-                mBluetoothLeScanner?.startScan(mScanCallback)
+                val settings = ScanSettings.Builder()
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .build()
+
+                val filter1 = ScanFilter.Builder()
+                    .setDeviceName("FCL Beacon1")
+                    .build()
+
+                val filter2 = ScanFilter.Builder()
+                    .setDeviceName("FWM8BLZ02")
+                    .build()
+
+                val filters = mutableListOf(filter1, filter2)
+
+                mBluetoothLeScanner?.startScan(filters, settings, mScanCallback)
             }
         }
         val timerBLECheck = Timer()
         val timerBLECheckTask = object: TimerTask() {
             override fun run() {
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -70){
+                    if(rssiVal!! > -65){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -164,11 +180,11 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         if(currentBearing != null){
             if(currentBearing != compassDir){
                 correctBearing = false
-//                linearLayout.visibility = View.INVISIBLE
+                linearLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
             }else{
                 correctBearing = true
                 vibratePhone()
-//                linearLayout.visibility = View.VISIBLE
+                linearLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
             }
         }
     }

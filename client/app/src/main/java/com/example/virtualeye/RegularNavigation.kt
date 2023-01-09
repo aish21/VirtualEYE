@@ -250,7 +250,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
 
                 if(rssiVal != null && bleMAC != null){
                     println("here2")
-                    if(rssiVal!! > -75){
+                    if(rssiVal!! > -65){
                         println("here3")
                         if(bleMAC != tempVal){
                             println("here4")
