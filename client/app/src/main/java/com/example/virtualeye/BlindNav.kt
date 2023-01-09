@@ -11,6 +11,7 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -25,8 +26,9 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import java.util.*
+import kotlin.concurrent.thread
 
 
 class BlindNav : AppCompatActivity(), SensorEventListener {
@@ -120,8 +122,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
 
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
-        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
-        timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 10000)
+        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
+        timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 5000)
 
         navInit()
     }
@@ -177,10 +179,12 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         Log.i("Compass", "Direction: $compassDir")
 
         if(currentBearing != null){
-            if(currentBearing != compassDir){
+            if(currentBearing != compassDir) {
                 correctBearing = false
+                findViewById<LinearLayout>(R.id.bg)?.setBackgroundColor(Color.RED)
             }else{
                 correctBearing = true
+                findViewById<LinearLayout>(R.id.bg)?.setBackgroundColor(Color.GREEN)
                 vibratePhone()
             }
         }
@@ -268,7 +272,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     if (it == TextToSpeech.SUCCESS) {
                         tts.setSpeechRate(0.95f)
                         tts.speak(
-                            "You have arrived at$key", TextToSpeech.QUEUE_FLUSH,
+                            "You have arrived at $key", TextToSpeech.QUEUE_FLUSH,
                             null,
                             null
                         )
@@ -291,61 +295,62 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     }
 
     private fun navInit(){
+        thread {
+            if (Globals.path.isEmpty()) {
+                val intent = Intent(this, AssistedNavigation::class.java)
+                startActivity(intent)
+            }
 
-        if(Globals.path.isEmpty()) {
-            val intent = Intent(this, AssistedNavigation::class.java)
-            startActivity(intent)
-        }
+            if (!checkInitBear()) {
+                tts = TextToSpeech(this) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        tts.setSpeechRate(0.95f)
+                        tts.speak(
+                            "You are facing the wrong direction! Turn until phone vibrates",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            null
+                        )
+                    }
+                }
+                checkInitBear()
+            }
 
-        if(!checkInitBear()) {
+            currentLoc = Globals.path[0]
+            println(currentLoc)
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
                     tts.setSpeechRate(0.95f)
                     tts.speak(
-                        "You are facing the wrong direction! Turn until phone vibrates",
+                        "Heading towards checkpoint $currentLoc",
                         TextToSpeech.QUEUE_FLUSH,
                         null,
                         null
                     )
                 }
             }
-            checkInitBear() // or call navInit again if the thing hangs
-        }
 
-        currentLoc = Globals.path[0]
-        println(currentLoc)
-        tts = TextToSpeech(this) {
-            if (it == TextToSpeech.SUCCESS) {
-                tts.setSpeechRate(0.95f)
-                tts.speak(
-                    "Heading towards checkpoint $currentLoc",
-                    TextToSpeech.QUEUE_FLUSH,
-                    null,
-                    null
-                )
+            currentDir = Globals.directions[0]
+            println(currentDir)
+            toSay = if (currentDir == "straight") {
+                "Head straight towards "
+            } else {
+                "Turn $currentDir towards"
             }
-        }
-
-        currentDir = Globals.directions[0]
-        println(currentDir)
-        toSay = if(currentDir == "straight"){
-            "Head straight towards"
-        } else{
-            "Turn $currentDir towards"
-        }
-        tts = TextToSpeech(this) {
-            if (it == TextToSpeech.SUCCESS) {
-                tts.setSpeechRate(0.95f)
-                tts.speak(
-                    toSay + currentLoc,
-                    TextToSpeech.QUEUE_FLUSH,
-                    null,
-                    null
-                )
+            tts = TextToSpeech(this) {
+                if (it == TextToSpeech.SUCCESS) {
+                    tts.setSpeechRate(0.95f)
+                    tts.speak(
+                        toSay + currentLoc,
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
             }
-        }
-        currentBearing = Globals.bearings[0]
-        println(currentBearing)
+            currentBearing = Globals.bearings[0]
+            println(currentBearing)
+        }.priority = Thread.MAX_PRIORITY
     }
 
     override fun onBackPressed() {

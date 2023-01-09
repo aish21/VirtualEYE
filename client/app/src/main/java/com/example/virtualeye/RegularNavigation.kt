@@ -2,10 +2,7 @@ package com.example.virtualeye
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.*
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
@@ -50,38 +47,6 @@ var tempVal: String? = null
 
 @Suppress("DEPRECATION")
 class RegularNavigation : AppCompatActivity(), SensorEventListener {
-
-//    // BluetoothAdapter is required for any and all Bluetooth activity.
-//    var btAdapter: BluetoothAdapter? = null
-//
-//    // BluetoothLeScanner is required for scanning for BLE devices.
-//    var btScanner: BluetoothLeScanner? = null
-//
-//    // A ScanCallback is required to process the scan results.
-//    val scanCallback = object : ScanCallback() {
-//        override fun onScanResult(callbackType: Int, result: ScanResult) {
-//            processResult(result)
-//        }
-//
-//        override fun onBatchScanResults(results: List<ScanResult>) {
-//            for (result in results) {
-//                processResult(result)
-//            }
-//        }
-//
-//        override fun onScanFailed(errorCode: Int) {
-//            Log.e(TAG, "BLE scan failed with code $errorCode")
-//        }
-//
-//        @SuppressLint("MissingPermission")
-//        private fun processResult(result: ScanResult) {
-//            // Do something with the scan result here.
-//            val device: BluetoothDevice = result.device
-//            val rssi: Int = result.rssi
-//            val name: String = device.name
-//            Log.i(TAG, "Found device: $name with RSSI: $rssi")
-//        }
-//    }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -218,14 +183,11 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 // BLE Scanner Init
                 val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
                 if (bluetoothAdapter == null) {
-                    // Toast.makeText(this, "Bluetooth", Toast.LENGTH_SHORT).show()
                     finish()
                 }
 
                 mBluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
                 mScanCallback = initCallbacks()
-                //println(mScanCallback.toString())
-                //println("mScanCallback")
 
                 val settings = ScanSettings.Builder()
                     .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -260,10 +222,8 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         button.setOnClickListener {
-//            startScanning(this)
-
             timerBLE.scheduleAtFixedRate(timerBLETask, 0, 10000)
-            timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
+            timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
 
             // Change map based on selected values in drop down
             if(selectedStart != "NULL" && selectedDest != "NULL"){
@@ -486,21 +446,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-
-//    @SuppressLint("MissingPermission")
-//    fun startScanning(context: Context) {
-//        // Get the Bluetooth adapter and scanner.
-//        btAdapter = BluetoothAdapter.getDefaultAdapter()
-//        btScanner = btAdapter?.bluetoothLeScanner
-//
-//        // Start scanning.
-//        btScanner?.startScan(scanCallback)
-//    }
-//
-//    @SuppressLint("MissingPermission")
-//    fun stopScanning() {
-//        btScanner?.stopScan(scanCallback)
-//    }
 
     override fun onResume() {
         super.onResume()
