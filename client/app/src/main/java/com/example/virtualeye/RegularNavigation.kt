@@ -2,9 +2,10 @@ package com.example.virtualeye
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.*
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -48,6 +49,38 @@ var tempVal: String? = null
 
 @Suppress("DEPRECATION")
 class RegularNavigation : AppCompatActivity(), SensorEventListener {
+
+//    // BluetoothAdapter is required for any and all Bluetooth activity.
+//    var btAdapter: BluetoothAdapter? = null
+//
+//    // BluetoothLeScanner is required for scanning for BLE devices.
+//    var btScanner: BluetoothLeScanner? = null
+//
+//    // A ScanCallback is required to process the scan results.
+//    val scanCallback = object : ScanCallback() {
+//        override fun onScanResult(callbackType: Int, result: ScanResult) {
+//            processResult(result)
+//        }
+//
+//        override fun onBatchScanResults(results: List<ScanResult>) {
+//            for (result in results) {
+//                processResult(result)
+//            }
+//        }
+//
+//        override fun onScanFailed(errorCode: Int) {
+//            Log.e(TAG, "BLE scan failed with code $errorCode")
+//        }
+//
+//        @SuppressLint("MissingPermission")
+//        private fun processResult(result: ScanResult) {
+//            // Do something with the scan result here.
+//            val device: BluetoothDevice = result.device
+//            val rssi: Int = result.rssi
+//            val name: String = device.name
+//            Log.i(TAG, "Found device: $name with RSSI: $rssi")
+//        }
+//    }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,6 +213,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         val timerBLE = Timer()
         val timerBLETask = object: TimerTask() {
             override fun run() {
+
                 // BLE Scanner Init
                 val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
                 if (bluetoothAdapter == null) {
@@ -191,15 +225,35 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 mScanCallback = initCallbacks()
                 //println(mScanCallback.toString())
                 //println("mScanCallback")
-                mBluetoothLeScanner?.startScan(mScanCallback)
+
+                val settings = ScanSettings.Builder()
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .build()
+
+                val filter1 = ScanFilter.Builder()
+                    .setDeviceName("FCL Beacon1")
+                    .build()
+
+                val filter2 = ScanFilter.Builder()
+                    .setDeviceName("FWM8BLZ02")
+                    .build()
+
+                val filters = mutableListOf(filter1, filter2)
+
+                mBluetoothLeScanner?.startScan(filters, settings, mScanCallback)
+                println("here")
             }
         }
         val timerBLECheck = Timer()
         val timerBLECheckTask = object: TimerTask() {
             override fun run() {
+
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -70){
+                    println("here2")
+                    if(rssiVal!! > -75){
+                        println("here3")
                         if(bleMAC != tempVal){
+                            println("here4")
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
                         }
@@ -209,8 +263,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         button.setOnClickListener {
+//            startScanning(this)
 
-            timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
+            timerBLE.scheduleAtFixedRate(timerBLETask, 0, 10000)
             timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
 
             // Change map based on selected values in drop down
@@ -435,6 +490,21 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         }
     }
 
+//    @SuppressLint("MissingPermission")
+//    fun startScanning(context: Context) {
+//        // Get the Bluetooth adapter and scanner.
+//        btAdapter = BluetoothAdapter.getDefaultAdapter()
+//        btScanner = btAdapter?.bluetoothLeScanner
+//
+//        // Start scanning.
+//        btScanner?.startScan(scanCallback)
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    fun stopScanning() {
+//        btScanner?.stopScan(scanCallback)
+//    }
+
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, accelerometer, SENSOR_DELAY_GAME)
@@ -528,10 +598,12 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         dictBLE["Software Lab 1"] = "F1:C6:5F:C8:71:9D"
         dictBLE["Software Lab 2"] = "D6:65:D2:8F:C5:8F"
         dictBLE["Hardware Projects Lab"] = "E9:4E:48:02:C6:84"
+        dictBLE["testNode"] = "CF:99:D4:6A:7A:75"
 
         if (dictBLE.containsValue(input)) {
             val key = dictBLE.filter { it.value == input }.keys.first()
             if(key == selectedDest){
+                println("here5")
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
                         tts.setSpeechRate(0.95f)

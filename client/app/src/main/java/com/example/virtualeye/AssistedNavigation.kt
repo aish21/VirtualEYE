@@ -65,7 +65,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             if (it == TextToSpeech.SUCCESS) {
                 welcomeMsg_tts.setSpeechRate(0.95f)
                 welcomeMsg_tts.speak(
-                    "Welcome to Assisted Navigation! Shake phone to set the start point and destination in the format - START LOCATION to DESTINATION",
+                    "Welcome to Assisted Navigation! Shake phone to set the start point and destination in the format - START LOCATION to DESTINATION. Once the navigation begins, the phone will vibrate as you head in the correct direction.",
                     TextToSpeech.QUEUE_FLUSH,
                     null,
                     null
@@ -96,6 +96,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             .build()
 
         objectDetector = ObjectDetection.getClient(customObjectDetectorOptions)
+
     }
 
     // Sensor change functions
@@ -448,7 +449,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     }
 
                     val intentBlindNav = Intent(this, BlindNav::class.java)
-                    startActivity(intentBlindNav)
+                    Globals.bearings?.let { startActivity(intentBlindNav) }
                 }
                 else{
                     tts = TextToSpeech(this) {

@@ -40,7 +40,7 @@ def shortest_path(graph, start, end):
   return None
 
 # Find the shortest path between nodes A and G
-shortest_path = shortest_path(graph, "cara", "hw_proj")
+shortest_path = shortest_path(graph, "cara", "sw1")
 
 # Print the shortest path with the edges traversed
 print("Shortest path:", shortest_path)
@@ -51,5 +51,7 @@ for i in range(len(shortest_path)-1):
 
 
 bearings = [item.split('/')[1] for item in directions]
+directions = [direction.split('/')[0] for direction in directions]
 
 print(bearings)
+print(directions)

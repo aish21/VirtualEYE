@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -18,6 +19,8 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
@@ -102,7 +105,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
 
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
         timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 2000)
-        timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 2000)
+        timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 10000)
 
         navInit()
     }
@@ -121,6 +124,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
+        val linearLayout = findViewById<LinearLayout>(R.id.bg)
         if (event?.sensor === accelerometer) {
             lowPass(event.values, lastAccelerometer)
             lastAccelerometerSet = true
@@ -160,20 +164,11 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         if(currentBearing != null){
             if(currentBearing != compassDir){
                 correctBearing = false
-
-                tts = TextToSpeech(this) {
-                    if (it == TextToSpeech.SUCCESS) {
-                        tts.setSpeechRate(0.95f)
-                        tts.speak(
-                            "Heading the wrong way! Phone will vibrate towards correct direction!", TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            null
-                        )
-                    }
-                }
+//                linearLayout.visibility = View.INVISIBLE
             }else{
                 correctBearing = true
                 vibratePhone()
+//                linearLayout.visibility = View.VISIBLE
             }
         }
     }
@@ -284,6 +279,11 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
 
     private fun navInit(){
 
+        if(Globals.path.isEmpty()) {
+            val intent = Intent(this, AssistedNavigation::class.java)
+            startActivity(intent)
+        }
+
         if(!checkInitBear()) {
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
@@ -300,6 +300,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
 
         currentLoc = Globals.path[0]
+        println(currentLoc)
         tts = TextToSpeech(this) {
             if (it == TextToSpeech.SUCCESS) {
                 tts.setSpeechRate(0.95f)
@@ -313,6 +314,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
 
         currentDir = Globals.directions[0]
+        println(currentDir)
         toSay = if(currentDir == "straight"){
             "Head straight towards"
         } else{
@@ -330,5 +332,6 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             }
         }
         currentBearing = Globals.bearings[0]
+        println(currentBearing)
     }
 }
