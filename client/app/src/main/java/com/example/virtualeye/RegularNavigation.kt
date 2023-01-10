@@ -24,7 +24,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.lang.Math.toDegrees
 import java.util.*
 
-
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
 var selectedStart: String? = null
@@ -43,7 +42,6 @@ var rssiVal: Int? = null
 var bleMAC: String? = null
 private lateinit var tts: TextToSpeech
 var tempVal: String? = null
-
 
 @Suppress("DEPRECATION")
 class RegularNavigation : AppCompatActivity(), SensorEventListener {
