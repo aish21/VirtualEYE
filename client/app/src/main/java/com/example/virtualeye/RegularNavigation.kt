@@ -23,6 +23,9 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.lang.Math.toDegrees
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.pow
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
@@ -219,9 +222,10 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        timerBLE.scheduleAtFixedRate(timerBLETask, 0, 10000)
+        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
+
         button.setOnClickListener {
-            timerBLE.scheduleAtFixedRate(timerBLETask, 0, 10000)
-            timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
 
             // Change map based on selected values in drop down
             if(selectedStart != "NULL" && selectedDest != "NULL"){
@@ -524,6 +528,8 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         }
                     }
                 }
+                val distance = 10.0.pow((27.55 - (20 * log10(2400.0)) + abs(result.rssi)) / 20.0)
+                Log.i("Distance: ", distance.toString())
                 return
             }
         }

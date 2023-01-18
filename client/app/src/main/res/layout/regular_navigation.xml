@@ -10,7 +10,7 @@
         android:id="@+id/elements_reg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FCE38A"
+        android:background="#00FCE38A"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -68,8 +68,8 @@
 
         <RelativeLayout
             android:id="@+id/activity_main"
-            android:layout_width="126dp"
-            android:layout_height="104dp"
+            android:layout_width="121dp"
+            android:layout_height="113dp"
             android:gravity="center"
             tools:context="de.neonew.compass.MainActivity">
 
@@ -91,7 +91,7 @@
             android:id="@+id/directions_view"
             android:layout_width="match_parent"
             android:layout_height="268dp"
-            app:srcCompat="@drawable/rounded_rect" />
+            app:srcCompat="@drawable/rounded_transp" />
 
     </LinearLayout>
 
