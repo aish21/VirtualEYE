@@ -223,7 +223,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 10000)
-        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
+        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 1000)
 
         button.setOnClickListener {
 
@@ -502,8 +502,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCallbacks(): ScanCallback {
-        val name1 = "FCL Beacon1"
-        val name2 = "FWM8BLZ02"
 
         return object : ScanCallback() {
             @SuppressLint("MissingPermission", "NewApi")
@@ -516,16 +514,14 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 if (result.device != null) {
                     if(result.device.name != null) {
                         //addDevice(result.getDevice(), result.getRssi());
-                        if(result.device.name.equals(name1) or result.device.name.equals(name2)) {
-                            Log.i("BLE NAME: ", result.device.name)
-                            //println(result.device.name)
-                            Log.i("BLE MAC: ", result.device.toString())
-                            bleMAC = result.device.toString()
-                            //println(result.device)
-                            Log.i("BLE RSSI: ", result.rssi.toString())
-                            rssiVal = result.rssi
-                            //println(result.rssi)
-                        }
+                        Log.i("BLE NAME: ", result.device.name)
+                        //println(result.device.name)
+                        Log.i("BLE MAC: ", result.device.toString())
+                        bleMAC = result.device.toString()
+                        //println(result.device)
+                        Log.i("BLE RSSI: ", result.rssi.toString())
+                        rssiVal = result.rssi
+                        //println(result.rssi)
                     }
                 }
                 val distance = 10.0.pow((27.55 - (20 * log10(2400.0)) + abs(result.rssi)) / 20.0)

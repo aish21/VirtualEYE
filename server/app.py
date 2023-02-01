@@ -22,6 +22,7 @@ app = Flask(__name__)
 
 @app.route('/sendLoc', methods=['GET', 'POST'])
 def process1():
+    
     '''
     /sendLoc?startLoc=xxxx&destLoc=xxxx - to be sent from client side
     '''

@@ -1,3 +1,5 @@
+import time
+
 # Create an empty dictionary to store the edges and their labels
 graph = {}
 directions = []
@@ -39,19 +41,32 @@ def shortest_path(graph, start, end):
   # If no path was found, return None
   return None
 
-# Find the shortest path between nodes A and G
-shortest_path = shortest_path(graph, "cara", "sw1")
+for start in graph:
+  for end in graph:
+    if start != end:
+        
+      start_time = time.perf_counter()
+      path = shortest_path(graph, start, end)
+      end_time = time.perf_counter()
+      time_taken = end_time - start_time
 
-# Print the shortest path with the edges traversed
-print("Shortest path:", shortest_path)
-print("Edges traversed:")
-for i in range(len(shortest_path)-1):
-  print(f"{shortest_path[i]} to {shortest_path[i+1]}: {graph[shortest_path[i]][shortest_path[i+1]]}")
-  directions.append(graph[shortest_path[i]][shortest_path[i+1]])
+      print(f"Shortest path from {start} to {end}: {path}")
+      print(f"Time taken to find the shortest path: {time_taken} seconds")
+      print(" ")
+
+# # Find the shortest path between nodes A and G
+# shortest_path = shortest_path(graph, "cara", "sw1")
+
+# # Print the shortest path with the edges traversed
+# print("Shortest path:", shortest_path)
+# print("Edges traversed:")
+# for i in range(len(shortest_path)-1):
+#   print(f"{shortest_path[i]} to {shortest_path[i+1]}: {graph[shortest_path[i]][shortest_path[i+1]]}")
+#   directions.append(graph[shortest_path[i]][shortest_path[i+1]])
 
 
-bearings = [item.split('/')[1] for item in directions]
-directions = [direction.split('/')[0] for direction in directions]
+# bearings = [item.split('/')[1] for item in directions]
+# directions = [direction.split('/')[0] for direction in directions]
 
-print(bearings)
-print(directions)
+# print(bearings)
+# print(directions)

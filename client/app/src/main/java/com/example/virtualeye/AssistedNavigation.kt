@@ -296,6 +296,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     @SuppressLint("MissingPermission")
     private fun handleCommand(command: String) {
         Toast.makeText(this, command, Toast.LENGTH_LONG).show()
+
         val dictBLE: MutableMap<String, String> = mutableMapOf()
         dictBLE["cara"] = "E4:7E:DB:B2:0D:3C"
         dictBLE["student lounge"] = "E3:2D:87:49:E5:BF"
@@ -449,7 +450,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                     }
 
                     val intentBlindNav = Intent(this, BlindNav::class.java)
-                    Globals.bearings?.let { startActivity(intentBlindNav) }
+                    startActivity(intentBlindNav)
                 }
                 else{
                     tts = TextToSpeech(this) {
@@ -502,9 +503,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun sendRequest(startLoc: String, destLoc: String): JSONObject {
         return withContext(Dispatchers.IO) {
-            Log.i("CHECK 2", "in fn")
             val request = URL("http://192.168.1.68:5000/sendLoc?startLoc=$startLoc&destLoc=$destLoc").openConnection() as HttpURLConnection
-            Log.i("CHECK 3", "aft req")
             request.requestMethod = "POST"
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
         }

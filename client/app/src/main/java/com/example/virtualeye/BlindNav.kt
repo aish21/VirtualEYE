@@ -316,19 +316,23 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 checkInitBear()
             }
 
+            Thread.sleep(2000)
+
             currentLoc = Globals.path[0]
             println(currentLoc)
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
                     tts.setSpeechRate(0.95f)
                     tts.speak(
-                        "Heading towards checkpoint $currentLoc",
+                        "Heading towards $currentLoc",
                         TextToSpeech.QUEUE_FLUSH,
                         null,
                         null
                     )
                 }
             }
+
+            Thread.sleep(2000)
 
             currentDir = Globals.directions[0]
             println(currentDir)
