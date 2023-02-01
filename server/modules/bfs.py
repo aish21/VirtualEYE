@@ -1,9 +1,8 @@
 import time
+import pandas as pd
 
 # Create an empty dictionary to store the edges and their labels
 graph = {}
-directions = []
-bearings = []
 
 # Add edges to the graph with custom labels
 graph["cara"] = {"lounge": "left/E"}
@@ -41,18 +40,27 @@ def shortest_path(graph, start, end):
   # If no path was found, return None
   return None
 
+# Store the data in a list of dictionaries
+data = []
 for start in graph:
   for end in graph:
     if start != end:
-        
       start_time = time.perf_counter()
       path = shortest_path(graph, start, end)
       end_time = time.perf_counter()
       time_taken = end_time - start_time
+      data.append({
+        "Start Location to Destination": f"{start} to {end}",
+        "Shortest Path Output": path,
+        "Time taken": time_taken
+      })
 
-      print(f"Shortest path from {start} to {end}: {path}")
-      print(f"Time taken to find the shortest path: {time_taken} seconds")
-      print(" ")
+# Create a dataframe from the list of dictionaries
+df = pd.DataFrame(data)
+
+# Display the data in a table
+print(df.to_string(index=False))
+
 
 # # Find the shortest path between nodes A and G
 # shortest_path = shortest_path(graph, "cara", "sw1")

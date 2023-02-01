@@ -1,7 +1,1 @@
-asyncio
-apscheduler
 flask
-adal
-requests
-telnetlib3
-sqlite3
