@@ -57,6 +57,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
         magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
 
+        navInit()
+
         // Recurring Tasks
         val timerBLE = Timer()
         val timerBLETask = object: TimerTask() {
@@ -124,8 +126,6 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
         timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
         timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 5000)
-
-        navInit()
     }
 
     // Functions to support the working of sensors
@@ -181,10 +181,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         if(currentBearing != null){
             if(currentBearing != compassDir) {
                 correctBearing = false
-                findViewById<LinearLayout>(R.id.bg)?.setBackgroundColor(Color.RED)
             }else{
                 correctBearing = true
-                findViewById<LinearLayout>(R.id.bg)?.setBackgroundColor(Color.GREEN)
                 vibratePhone()
             }
         }
@@ -364,3 +362,70 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         startActivity(goBackHome)
     }
 }
+
+//import android.Manifest
+//import android.annotation.SuppressLint
+//import android.content.Context
+//import android.content.pm.PackageManager
+//import android.hardware.Sensor
+//import android.hardware.SensorEvent
+//import android.hardware.SensorEventListener
+//import android.hardware.SensorManager
+//import android.os.Bundle
+//import android.widget.TextView
+//import androidx.appcompat.app.AppCompatActivity
+//import androidx.core.app.ActivityCompat
+//import androidx.core.content.ContextCompat
+//
+//class BlindNav : AppCompatActivity(), SensorEventListener {
+//
+//    private lateinit var stepCountTextView: TextView
+//    private lateinit var sensorManager: SensorManager
+//
+//    private var prevStepCount = 0f
+//
+//    @SuppressLint("InlinedApi")
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.blind_nav)
+//
+//        stepCountTextView = findViewById(R.id.step_count_text_view)
+//
+//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+//
+//        val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
+//
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+//            != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+//                REQUEST_CODE_ACTIVITY_RECOGNITION)
+//        }
+//    }
+//
+//
+//    override fun onResume() {
+//        super.onResume()
+//        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+//        sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        sensorManager.unregisterListener(this)
+//    }
+//
+//    override fun onSensorChanged(event: SensorEvent?) {
+//        if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
+//            val stepCount = event.values[0].toInt()
+//            if (prevStepCount == 0f) {
+//                prevStepCount = stepCount.toFloat()
+//            }
+//            stepCountTextView.text = (stepCount - prevStepCount).toInt().toString()
+//        }
+//    }
+//
+//    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+//        // Not used
+//    }
+//}

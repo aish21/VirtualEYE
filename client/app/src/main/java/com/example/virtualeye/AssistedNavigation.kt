@@ -10,13 +10,16 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.Handler
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -43,6 +46,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
     private lateinit var binding: AssistedNavigationBinding
     private lateinit var welcomeMsg_tts: TextToSpeech
+    private lateinit var sensorMsg_tts: TextToSpeech
     private lateinit var objectDetector: ObjectDetector
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var tts: TextToSpeech
@@ -63,9 +67,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
         welcomeMsg_tts = TextToSpeech(this) {
             if (it == TextToSpeech.SUCCESS) {
-                welcomeMsg_tts.setSpeechRate(0.95f)
+                welcomeMsg_tts.setSpeechRate(0.85f)
                 welcomeMsg_tts.speak(
-                    "Welcome to Assisted Navigation! Shake phone to set the start point and destination in the format - START LOCATION to DESTINATION. Once the navigation begins, the phone will vibrate as you head in the correct direction.",
+                    "Welcome to Free Roam Mode! In this mode, you will be alerted of the obstacles around you. These are the following locations available near you - Cybercrime Analysis & Research Alliance @ NTU (CARA). SCSE Student Lounge. Hardware Lab 1. Hardware Lab 2. Software Lab 1. Software Lab 2. Hardware Projects Lab. If you would like to start navigation, kindly shake your phone!",
                     TextToSpeech.QUEUE_FLUSH,
                     null,
                     null
@@ -97,6 +101,22 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
         objectDetector = ObjectDetection.getClient(customObjectDetectorOptions)
 
+        sensorMsg_tts = TextToSpeech(this) {
+            if (it == TextToSpeech.SUCCESS) {
+                sensorMsg_tts.setSpeechRate(0.90f)
+            }
+        }
+    }
+
+    private fun startMicrophone() {
+        verifyAudioPermissions()
+        createSpeechRecognizer()
+
+        if (mIsListening) {
+            handleSpeechEnd()
+        } else {
+            handleSpeechBegin()
+        }
     }
 
     // Sensor change functions
@@ -128,20 +148,22 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 if(tts.isSpeaking){
                     tts.stop()
                 }
-                verifyAudioPermissions()
-                createSpeechRecognizer()
 
-                if (mIsListening) {
-                    handleSpeechEnd()
-                } else {
-                    if(tts.isSpeaking){
-                        tts.stop()
-                    }
-                    handleSpeechBegin()
-                }
+                sensorMsg_tts.speak(
+                    "Please provide your instruction in the format - Start Location to Destination.",
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    null
+                )
+
+                val handler = Handler()
+                handler.postDelayed({
+                    startMicrophone()
+                }, 7000)  // 5000 milliseconds = 5 seconds
             }
         }
     }
+
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Not needed - placeholder function

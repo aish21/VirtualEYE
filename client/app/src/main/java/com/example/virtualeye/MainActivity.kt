@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Navigate to Regular Navigation Screen - button click
         val regular_nav_bt = findViewById<ImageButton>(R.id.regular_navigation_bt)
         regular_nav_bt.setOnClickListener{
-            val intent_regular_nav_bt = Intent(this, RegularNavigation::class.java)
+            val intent_regular_nav_bt = Intent(this, BlindNav::class.java)
             tts.shutdown()
             startActivity(intent_regular_nav_bt)
         }
