@@ -8,15 +8,6 @@
 7 - E9:4E:48:02:C6:84
 8 - CF:99:D4:6A:7A:75
 
-import ast
-
-list_string = "[1, 2, 3, 4, 5]"
-
-# Use ast.literal_eval() to parse the string and return the corresponding list
-my_list = ast.literal_eval(list_string)
-
-print(my_list)  # Output: [1, 2, 3, 4, 5]
-
 '''
 
 # Function to find the shortest path between two nodes using breadth-first search
