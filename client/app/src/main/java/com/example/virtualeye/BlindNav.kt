@@ -3,6 +3,7 @@
 package com.example.virtualeye
 
 // Imports
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.ScanCallback
@@ -11,7 +12,7 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_ACCELEROMETER
 import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
@@ -24,12 +25,13 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.widget.LinearLayout
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import java.util.*
 import kotlin.concurrent.thread
-
 
 class BlindNav : AppCompatActivity(), SensorEventListener {
 
@@ -46,8 +48,10 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     var correctBearing = false
     var toSay: String? = null
     var callNavInit = false
+    private var prevStepCount = 0f
+    private var stepCounter = 0
 
-
+    @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -56,8 +60,51 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
         magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
+        val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
+
+        val startBt = findViewById<ImageButton>(R.id.start_loc)
+        val destBt = findViewById<ImageButton>(R.id.des_loc)
+
+        if(Globals.startLocation == "cara"){
+            startBt.setImageResource(R.drawable.cara)
+        } else if(Globals.startLocation == "student lounge"){
+            startBt.setImageResource(R.drawable.student_lounge)
+        }else if(Globals.startLocation == "hardware lab 1"){
+            startBt.setImageResource(R.drawable.hardware_lab_1)
+        }else if(Globals.startLocation == "hardware lab 2"){
+            startBt.setImageResource(R.drawable.hardware_lab_2)
+        }else if(Globals.startLocation == "software lab 1"){
+            startBt.setImageResource(R.drawable.software_lab_1)
+        }else if(Globals.startLocation == "software lab 2"){
+            startBt.setImageResource(R.drawable.software_lab_2)
+        }else if(Globals.startLocation == "hardware projects lab"){
+            startBt.setImageResource(R.drawable.hardware_projects)
+        }
+
+        if(Globals.destLocation == "cara"){
+            destBt.setImageResource(R.drawable.cara)
+        } else if(Globals.destLocation == "student lounge"){
+            destBt.setImageResource(R.drawable.student_lounge)
+        }else if(Globals.destLocation == "hardware lab 1"){
+            destBt.setImageResource(R.drawable.hardware_lab_1)
+        }else if(Globals.destLocation == "hardware lab 2"){
+            destBt.setImageResource(R.drawable.hardware_lab_2)
+        }else if(Globals.destLocation == "software lab 1"){
+            destBt.setImageResource(R.drawable.software_lab_1)
+        }else if(Globals.destLocation == "software lab 2"){
+            destBt.setImageResource(R.drawable.software_lab_2)
+        }else if(Globals.destLocation == "hardware projects lab"){
+            destBt.setImageResource(R.drawable.hardware_projects)
+        }
 
         navInit()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                REQUEST_CODE_ACTIVITY_RECOGNITION)
+        }
 
         // Recurring Tasks
         val timerBLE = Timer()
@@ -133,12 +180,15 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         super.onResume()
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
         sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_GAME)
+        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, magnetometer)
+        sensorManager.unregisterListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -186,6 +236,27 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 vibratePhone()
             }
         }
+
+        if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
+            val stepCount = event.values[0].toInt()
+            if (prevStepCount == 0f) {
+                prevStepCount = stepCount.toFloat()
+            }
+            stepCounter++
+            if (stepCounter % 10 == 0) {
+                callFunctionEvery10Steps()
+            }
+        }
+    }
+
+    private fun callFunctionEvery10Steps() {
+        tts.speak(
+            "Continue straight for 10 steps", TextToSpeech.QUEUE_FLUSH,
+            null,
+            null
+        )
+
+        Toast.makeText(this, "Continue straight for 10 steps", Toast.LENGTH_LONG).show()
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -276,6 +347,9 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
+
+                Toast.makeText(this, "You have arrived at $key", Toast.LENGTH_LONG).show()
+
                 if(!callNavInit) {
                     callNavInit = true
                 }
@@ -292,6 +366,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
     }
 
+
+
     private fun navInit(){
         thread {
             if (Globals.path.isEmpty()) {
@@ -304,13 +380,16 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     if (it == TextToSpeech.SUCCESS) {
                         tts.setSpeechRate(0.95f)
                         tts.speak(
-                            "You are facing the wrong direction! Turn until phone vibrates",
+                            "You are facing the wrong direction! Please turn until your phone vibrates",
                             TextToSpeech.QUEUE_FLUSH,
                             null,
                             null
                         )
                     }
                 }
+
+                Toast.makeText(this, "You are facing the wrong direction! Please turn until your phone vibrates", Toast.LENGTH_LONG).show()
+
                 checkInitBear()
             }
 
@@ -322,7 +401,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 if (it == TextToSpeech.SUCCESS) {
                     tts.setSpeechRate(0.95f)
                     tts.speak(
-                        "Heading towards $currentLoc",
+                        "You are now heading towards $currentLoc",
                         TextToSpeech.QUEUE_FLUSH,
                         null,
                         null
@@ -330,18 +409,20 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 }
             }
 
+            Toast.makeText(this, "You are now heading towards $currentLoc", Toast.LENGTH_LONG).show()
+
             Thread.sleep(2000)
 
             currentDir = Globals.directions[0]
             println(currentDir)
             toSay = if (currentDir == "straight") {
-                "Head straight towards "
+                "Please head straight towards "
             } else {
-                "Turn $currentDir towards"
+                "In 10 steps, please turn $currentDir towards"
             }
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
-                    tts.setSpeechRate(0.95f)
+                    tts.setSpeechRate(0.90f)
                     tts.speak(
                         toSay + currentLoc,
                         TextToSpeech.QUEUE_FLUSH,
@@ -350,6 +431,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     )
                 }
             }
+            Toast.makeText(this, "$toSay $currentLoc", Toast.LENGTH_LONG).show()
+
             currentBearing = Globals.bearings[0]
             println(currentBearing)
         }.priority = Thread.MAX_PRIORITY
@@ -362,70 +445,3 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         startActivity(goBackHome)
     }
 }
-
-//import android.Manifest
-//import android.annotation.SuppressLint
-//import android.content.Context
-//import android.content.pm.PackageManager
-//import android.hardware.Sensor
-//import android.hardware.SensorEvent
-//import android.hardware.SensorEventListener
-//import android.hardware.SensorManager
-//import android.os.Bundle
-//import android.widget.TextView
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.core.app.ActivityCompat
-//import androidx.core.content.ContextCompat
-//
-//class BlindNav : AppCompatActivity(), SensorEventListener {
-//
-//    private lateinit var stepCountTextView: TextView
-//    private lateinit var sensorManager: SensorManager
-//
-//    private var prevStepCount = 0f
-//
-//    @SuppressLint("InlinedApi")
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.blind_nav)
-//
-//        stepCountTextView = findViewById(R.id.step_count_text_view)
-//
-//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-//
-//        val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
-//            != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-//                REQUEST_CODE_ACTIVITY_RECOGNITION)
-//        }
-//    }
-//
-//
-//    override fun onResume() {
-//        super.onResume()
-//        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-//        sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        sensorManager.unregisterListener(this)
-//    }
-//
-//    override fun onSensorChanged(event: SensorEvent?) {
-//        if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
-//            val stepCount = event.values[0].toInt()
-//            if (prevStepCount == 0f) {
-//                prevStepCount = stepCount.toFloat()
-//            }
-//            stepCountTextView.text = (stepCount - prevStepCount).toInt().toString()
-//        }
-//    }
-//
-//    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-//        // Not used
-//    }
-//}

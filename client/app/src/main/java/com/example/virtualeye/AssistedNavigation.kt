@@ -15,11 +15,9 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -465,6 +463,9 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                         for (i in 0 until bearingsTemp.length()) {
                             Globals.bearings.add(bearingsTemp.get(i) as String)
                         }
+
+                        Globals.startLocation = startPoint
+                        Globals.destLocation = destLoc
 
                         println(Globals.path)
                         println(Globals.directions)
