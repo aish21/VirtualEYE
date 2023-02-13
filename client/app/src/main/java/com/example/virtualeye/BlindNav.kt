@@ -19,10 +19,7 @@ import android.hardware.Sensor.TYPE_MAGNETIC_FIELD
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.ImageButton
@@ -55,47 +52,13 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        setContentView(R.layout.blind_nav)
 
         // Init Sensor Manager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
         magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
         val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
-
-        val startBt = findViewById<ImageButton>(R.id.start_loc)
-        val destBt = findViewById<ImageButton>(R.id.des_loc)
-
-        if(Globals.startLocation == "cara"){
-            startBt.setImageResource(R.drawable.cara)
-        } else if(Globals.startLocation == "student lounge"){
-            startBt.setImageResource(R.drawable.student_lounge)
-        }else if(Globals.startLocation == "hardware lab 1"){
-            startBt.setImageResource(R.drawable.hardware_lab_1)
-        }else if(Globals.startLocation == "hardware lab 2"){
-            startBt.setImageResource(R.drawable.hardware_lab_2)
-        }else if(Globals.startLocation == "software lab 1"){
-            startBt.setImageResource(R.drawable.software_lab_1)
-        }else if(Globals.startLocation == "software lab 2"){
-            startBt.setImageResource(R.drawable.software_lab_2)
-        }else if(Globals.startLocation == "hardware projects lab"){
-            startBt.setImageResource(R.drawable.hardware_projects)
-        }
-
-        if(Globals.destLocation == "cara"){
-            destBt.setImageResource(R.drawable.cara)
-        } else if(Globals.destLocation == "student lounge"){
-            destBt.setImageResource(R.drawable.student_lounge)
-        }else if(Globals.destLocation == "hardware lab 1"){
-            destBt.setImageResource(R.drawable.hardware_lab_1)
-        }else if(Globals.destLocation == "hardware lab 2"){
-            destBt.setImageResource(R.drawable.hardware_lab_2)
-        }else if(Globals.destLocation == "software lab 1"){
-            destBt.setImageResource(R.drawable.software_lab_1)
-        }else if(Globals.destLocation == "software lab 2"){
-            destBt.setImageResource(R.drawable.software_lab_2)
-        }else if(Globals.destLocation == "hardware projects lab"){
-            destBt.setImageResource(R.drawable.hardware_projects)
-        }
 
         navInit()
 
@@ -141,7 +104,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         val timerBLECheckTask = object: TimerTask() {
             override fun run() {
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -75){
+                    if(rssiVal!! > -80){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -173,6 +136,42 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
         timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
         timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 5000)
+
+        val startBt = findViewById<ImageButton>(R.id.start_loc)
+        val destBt = findViewById<ImageButton>(R.id.des_loc)
+        Thread.sleep(1000)
+        if(Globals.startLocation == "cara"){
+            startBt.setImageResource(R.drawable.cara)
+        } else if(Globals.startLocation == "student lounge"){
+            startBt.setImageResource(R.drawable.student_lounge)
+        }else if(Globals.startLocation == "hardware lab 1"){
+            startBt.setImageResource(R.drawable.hardware_lab_1)
+        }else if(Globals.startLocation == "hardware lab 2"){
+            startBt.setImageResource(R.drawable.hardware_lab_2)
+        }else if(Globals.startLocation == "software lab 1"){
+            startBt.setImageResource(R.drawable.software_lab_1)
+        }else if(Globals.startLocation == "software lab 2"){
+            startBt.setImageResource(R.drawable.software_lab_2)
+        }else if(Globals.startLocation == "hardware projects lab"){
+            startBt.setImageResource(R.drawable.hardware_projects)
+        }
+
+        if(Globals.destLocation == "cara"){
+            destBt.setImageResource(R.drawable.cara)
+        } else if(Globals.destLocation == "student lounge"){
+            destBt.setImageResource(R.drawable.student_lounge)
+        }else if(Globals.destLocation == "hardware lab 1"){
+            destBt.setImageResource(R.drawable.hardware_lab_1)
+        }else if(Globals.destLocation == "hardware lab 2"){
+            destBt.setImageResource(R.drawable.hardware_lab_2)
+        }else if(Globals.destLocation == "software lab 1"){
+            destBt.setImageResource(R.drawable.software_lab_1)
+        }else if(Globals.destLocation == "software lab 2"){
+            destBt.setImageResource(R.drawable.software_lab_2)
+        }else if(Globals.destLocation == "hardware projects lab"){
+            destBt.setImageResource(R.drawable.hardware_projects)
+        }
+
     }
 
     // Functions to support the working of sensors
@@ -243,7 +242,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 prevStepCount = stepCount.toFloat()
             }
             stepCounter++
-            if (stepCounter % 10 == 0) {
+            if (stepCounter % 5 == 0) {
                 callFunctionEvery10Steps()
             }
         }
@@ -256,7 +255,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             null
         )
 
-        Toast.makeText(this, "Continue straight for 10 steps", Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, "Continue straight for 10 steps", Toast.LENGTH_LONG).show()
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -348,7 +347,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     }
                 }
 
-                Toast.makeText(this, "You have arrived at $key", Toast.LENGTH_LONG).show()
+//                Toast.makeText(this, "You have arrived at $key", Toast.LENGTH_LONG).show()
 
                 if(!callNavInit) {
                     callNavInit = true
@@ -371,6 +370,8 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     private fun navInit(){
         thread {
             if (Globals.path.isEmpty()) {
+                finish()
+                tts.shutdown()
                 val intent = Intent(this, AssistedNavigation::class.java)
                 startActivity(intent)
             }
@@ -388,7 +389,9 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     }
                 }
 
-                Toast.makeText(this, "You are facing the wrong direction! Please turn until your phone vibrates", Toast.LENGTH_LONG).show()
+//                Looper.prepare()
+//                Toast.makeText(this, "You are facing the wrong direction! Please turn until your phone vibrates", Toast.LENGTH_LONG).show()
+//                Looper.loop()
 
                 checkInitBear()
             }
@@ -409,7 +412,9 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-            Toast.makeText(this, "You are now heading towards $currentLoc", Toast.LENGTH_LONG).show()
+//            Looper.prepare()
+//            Toast.makeText(this, "You are now heading towards $currentLoc", Toast.LENGTH_LONG).show()
+//            Looper.loop()
 
             Thread.sleep(2000)
 
@@ -418,7 +423,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             toSay = if (currentDir == "straight") {
                 "Please head straight towards "
             } else {
-                "In 10 steps, please turn $currentDir towards"
+                "In 5 steps, please turn $currentDir towards"
             }
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
@@ -431,7 +436,10 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                     )
                 }
             }
-            Toast.makeText(this, "$toSay $currentLoc", Toast.LENGTH_LONG).show()
+
+//            Looper.prepare()
+//            Toast.makeText(this, "$toSay $currentLoc", Toast.LENGTH_LONG).show()
+//            Looper.loop()
 
             currentBearing = Globals.bearings[0]
             println(currentBearing)

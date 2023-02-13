@@ -12,6 +12,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_GAME
 import android.os.Bundle
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
@@ -212,7 +213,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             override fun run() {
 
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -75){
+                    if(rssiVal!! > -80){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -447,6 +448,18 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
         }
+
+        tts = TextToSpeech(this) {
+            if (it == TextToSpeech.SUCCESS) {
+                tts.setSpeechRate(0.85f)
+                tts.speak(
+                    "Welcome to Vision-based indoor navigation! In this mode, you will be alerted of the landmarks around you. You can select your locations from the dropdown menu and begin navigation!",
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    null
+                )
+            }
+        }
     }
 
     override fun onResume() {
@@ -524,8 +537,6 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         //println(result.rssi)
                     }
                 }
-                val distance = 10.0.pow((27.55 - (20 * log10(2400.0)) + abs(result.rssi)) / 20.0)
-                Log.i("Distance: ", distance.toString())
                 return
             }
         }
@@ -555,6 +566,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
+                Looper.prepare()
+                Toast.makeText(this, "You have arrived at your destination!", Toast.LENGTH_LONG).show()
+                Looper.loop()
             }else{
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
@@ -566,6 +580,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
+                Looper.prepare()
+                Toast.makeText(this, "You have arrived at$key", Toast.LENGTH_LONG).show()
+                Looper.loop()
             }
         }
     }

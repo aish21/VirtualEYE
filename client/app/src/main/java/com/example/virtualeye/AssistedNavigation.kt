@@ -148,7 +148,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                 }
 
                 sensorMsg_tts.speak(
-                    "Please provide your instruction in the format - Start Location to Destination.",
+                    "Please provide your instruction in the format - Start Location to Destination. After the beep.",
                     TextToSpeech.QUEUE_FLUSH,
                     null,
                     null
@@ -472,6 +472,8 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                         println(Globals.bearings)
                     }
 
+                    Thread.sleep(5000)
+
                     val intentBlindNav = Intent(this, BlindNav::class.java)
                     startActivity(intentBlindNav)
                 }
@@ -526,7 +528,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun sendRequest(startLoc: String, destLoc: String): JSONObject {
         return withContext(Dispatchers.IO) {
-            val request = URL("http://192.168.1.68:5000/sendLoc?startLoc=$startLoc&destLoc=$destLoc").openConnection() as HttpURLConnection
+            val request = URL("http://4.236.138.187:5000/sendLoc?startLoc=$startLoc&destLoc=$destLoc").openConnection() as HttpURLConnection
             request.requestMethod = "POST"
             JSONObject(request.inputStream.use { it.reader().use { reader -> reader.readText() } } )
         }
