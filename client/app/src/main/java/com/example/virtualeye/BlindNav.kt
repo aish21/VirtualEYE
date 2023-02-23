@@ -198,7 +198,6 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             lowPass(event.values, lastMagnetometer)
             lastMagnetometerSet = true
         }
-
         if (lastAccelerometerSet && lastMagnetometerSet) {
             val r = FloatArray(9)
             if (SensorManager.getRotationMatrix(r, null, lastAccelerometer, lastMagnetometer)) {
@@ -208,7 +207,6 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 currentDegree = degree
             }
         }
-
         if (currentDegree >= 315 || currentDegree < 45) {
             // North
             compassDir = "N"
