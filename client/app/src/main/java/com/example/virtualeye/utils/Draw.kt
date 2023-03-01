@@ -28,12 +28,18 @@ class Draw(context: Context?, var rect: Rect, var text: String) : View(context) 
         textPaint.color = Color.GREEN
         textPaint.strokeWidth = 75f
         textPaint.style = Paint.Style.FILL
+        textPaint.textSize = 60f // Set the text size to 50 pixels
     }
 
     override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
+        // Calculate the width of the text
+        val textWidth = textPaint.measureText(text)
 
-        canvas?.drawText(text, rect.centerX().toFloat(), rect.centerY().toFloat(), textPaint)
+        // Calculate the x-coordinate of the text to center it in the box
+        val textX = rect.centerX().toFloat() - textWidth / 2
+
+        // Draw the text and the box
+        canvas?.drawText(text, textX, rect.centerY().toFloat(), textPaint)
         canvas?.drawRect(rect.left.toFloat(), rect.top.toFloat(), rect.bottom.toFloat(), rect.right.toFloat(), boundaryPaint)
 
     }

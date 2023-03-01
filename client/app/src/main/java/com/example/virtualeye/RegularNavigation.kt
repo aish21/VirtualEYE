@@ -24,9 +24,6 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.lang.Math.toDegrees
 import java.util.*
-import kotlin.math.abs
-import kotlin.math.log10
-import kotlin.math.pow
 
 var mBluetoothLeScanner: BluetoothLeScanner? = null
 var mScanCallback: ScanCallback? = null
@@ -213,7 +210,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
             override fun run() {
 
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -80){
+                    if(rssiVal!! > -87){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -566,9 +563,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
-                Looper.prepare()
-                Toast.makeText(this, "You have arrived at your destination!", Toast.LENGTH_LONG).show()
-                Looper.loop()
+//                Looper.prepare()
+//                Toast.makeText(this, "You have arrived at your destination!", Toast.LENGTH_LONG).show()
+//                Looper.loop()
             }else{
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
@@ -580,9 +577,9 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
-                Looper.prepare()
-                Toast.makeText(this, "You have arrived at$key", Toast.LENGTH_LONG).show()
-                Looper.loop()
+//                Looper.prepare()
+//                Toast.makeText(this, "You have arrived at$key", Toast.LENGTH_LONG).show()
+//                Looper.loop()
             }
         }
     }

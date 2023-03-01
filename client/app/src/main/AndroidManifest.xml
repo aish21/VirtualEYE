@@ -29,6 +29,7 @@
         android:roundIcon="@drawable/eye"
         android:supportsRtl="true"
         android:theme="@style/Theme.VirtualEye"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
 
         <activity

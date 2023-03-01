@@ -104,7 +104,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         val timerBLECheckTask = object: TimerTask() {
             override fun run() {
                 if(rssiVal != null && bleMAC != null){
-                    if(rssiVal!! > -80){
+                    if(rssiVal!! > -83){
                         if(bleMAC != tempVal){
                             callTTS(bleMAC!!)
                             tempVal = bleMAC
@@ -134,7 +134,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
 
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
-        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 500)
+        timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 100)
         timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 5000)
 
         val startBt = findViewById<ImageButton>(R.id.start_loc)
@@ -368,6 +368,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     private fun navInit(){
         thread {
             if (Globals.path.isEmpty()) {
+                Thread.sleep(2000)
                 finish()
                 tts.shutdown()
                 val intent = Intent(this, AssistedNavigation::class.java)
@@ -394,7 +395,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 checkInitBear()
             }
 
-            Thread.sleep(2000)
+            Thread.sleep(1500)
 
             currentLoc = Globals.path[0]
             println(currentLoc)
@@ -414,14 +415,14 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
 //            Toast.makeText(this, "You are now heading towards $currentLoc", Toast.LENGTH_LONG).show()
 //            Looper.loop()
 
-            Thread.sleep(2000)
+            Thread.sleep(1500)
 
             currentDir = Globals.directions[0]
             println(currentDir)
             toSay = if (currentDir == "straight") {
                 "Please head straight towards "
             } else {
-                "In 5 steps, please turn $currentDir towards"
+                "In 12 steps, please turn $currentDir towards"
             }
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {

@@ -9,8 +9,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -40,6 +39,7 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
+@Suppress("DEPRECATION")
 class AssistedNavigation : AppCompatActivity(), SensorEventListener {
 
     private lateinit var binding: AssistedNavigationBinding
@@ -223,6 +223,8 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
                                             null
                                         )
                                         textToSay = objDet
+                                        vibratePhone()
+                                        Toast.makeText(this, objDet + " detected" , Toast.LENGTH_LONG).show()
                                     }
                                 }
                             }
@@ -235,6 +237,17 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
             }
         }
         cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, imageAnalysis, preview)
+    }
+
+    private fun vibratePhone() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) { // Vibrator availability checking
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE)) // New vibrate method for API Level 26 or higher
+            } else {
+                vibrator.vibrate(500) // Vibrate method for below API Level 26
+            }
+        }
     }
 
     private fun verifyAudioPermissions() {
