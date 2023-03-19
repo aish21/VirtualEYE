@@ -669,7 +669,7 @@ class AssistedNavigation : AppCompatActivity(), SensorEventListener {
      * Overrides the default behavior when the back button is pressed.
      * Finishes the current activity and starts the main activity.
      */
-    
+
     override fun onBackPressed() {
         finish()
         val goBackHome = Intent(this, MainActivity::class.java)

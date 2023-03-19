@@ -2,7 +2,7 @@
 
 package com.example.virtualeye
 
-// Imports
+// Required Imports
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -30,6 +30,16 @@ import androidx.core.content.ContextCompat
 import java.util.*
 import kotlin.concurrent.thread
 
+/**
+ * BlindNav class is responsible for providing blind navigation feature by utilizing the device's sensors
+ * such as accelerometer and magnetometer to determine the user's orientation and location.
+ * This class implements the SensorEventListener interface to listen to changes in sensor readings and
+ * provides implementations for its abstract methods.
+ * It uses BLE signals to detect the location of the user and provides turn by turn directions to reach the desired location.
+ * This class extends the AppCompatActivity class to support the user interface.
+ * @constructor creates a new BlindNav object
+ */
+
 class BlindNav : AppCompatActivity(), SensorEventListener {
 
     // Variable Declaration
@@ -48,13 +58,18 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
     private var prevStepCount = 0f
     private var stepCounter = 0
 
+    /**
+     * The onCreate() function is called when the activity is starting. It initializes the UI,
+     * starts the BLE scanner and schedules recurring tasks.
+     */
+
     @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.blind_nav)
 
-        // Init Sensor Manager
+        // Initialize Sensor Manager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER)
         magnetometer = sensorManager.getDefaultSensor(TYPE_MAGNETIC_FIELD)
@@ -133,6 +148,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        // Schedule recurring tasks
         timerBLE.scheduleAtFixedRate(timerBLETask, 0, 1000)
         timerBLECheck.scheduleAtFixedRate(timerBLECheckTask, 0, 100)
         timerCallNavInit.scheduleAtFixedRate(timerCallNavInitTask, 0, 5000)
@@ -174,7 +190,10 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
 
     }
 
-    // Functions to support the working of sensors
+    /**
+     * Called when the activity is resumed. Registers listeners for the accelerometer, magnetometer, and step counter sensors.
+     */
+
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
@@ -183,12 +202,23 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
     }
 
+    /**
+     * Called when the activity is paused. Unregisters listeners for the accelerometer, magnetometer, and step counter sensors.
+     */
+
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, magnetometer)
         sensorManager.unregisterListener(this)
     }
+
+    /**
+     * Called when a sensor value changes. Updates the compass direction based on the accelerometer and magnetometer readings.
+     * Also updates the step counter and triggers a function every 10 steps.
+     *
+     * @param event the SensorEvent object containing the new sensor values
+     */
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor === accelerometer) {
@@ -246,19 +276,34 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    /**
+     * Speaks out loud the instructions for the user to continue straight for 10 steps.
+     */
+
     private fun callFunctionEvery10Steps() {
         tts.speak(
             "Continue straight for 10 steps", TextToSpeech.QUEUE_FLUSH,
             null,
             null
         )
-
-//        Toast.makeText(this, "Continue straight for 10 steps", Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Placeholder function to handle any changes in the accuracy of the sensor data.
+     *
+     * @param sensor the sensor whose accuracy has changed
+     * @param accuracy the new accuracy value
+     */
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Not needed - placeholder function
     }
+
+    /**
+     * A low-pass filter to smooth out sensor data.
+     *
+     * @param input an array of input values to be filtered
+     * @param output an array to store the filtered values
+     */
 
     private fun lowPass(input: FloatArray, output: FloatArray) {
         val alpha = 0.05f
@@ -266,6 +311,10 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             output[i] = output[i] + alpha * (input[i] - output[i])
         }
     }
+
+    /**
+     * Vibrates the phone for 1 second.
+     */
 
     private fun vibratePhone() {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -277,6 +326,12 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             }
         }
     }
+
+    /**
+     * Initializes a ScanCallback object to handle BLE scan results.
+     *
+     * @return a ScanCallback object to handle BLE scan results
+     */
 
     private fun initCallbacks(): ScanCallback {
         val name1 = "FCL Beacon1"
@@ -309,6 +364,13 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
             }
         }
     }
+
+    /**
+     * This function uses TextToSpeech API to output speech announcing the arrival at a location.
+     *
+     * @param input The MAC address of the BLE device corresponding to the location.
+     * @return void
+     */
 
     private fun callTTS(input: String) {
         val dictBLE: MutableMap<String, String> = mutableMapOf()
@@ -354,6 +416,14 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    /**
+     * This function checks if the current compass direction is the same as the initial bearing.
+     * If it is, the phone vibrates and returns true.
+     * If it isn't, it returns false.
+     *
+     * @return Boolean indicating whether the current compass direction is the same as the initial bearing.
+     */
+
     private fun checkInitBear(): Boolean {
         return if(Globals.initBearing == compassDir){
             vibratePhone()
@@ -363,10 +433,15 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         }
     }
 
-
+    /**
+     * Initializes the assisted navigation process by checking the current bearing and providing directions to the first location.
+     * If the bearing is incorrect, the user is prompted to turn until their phone vibrates.
+     * If there are no locations in the path, the activity is finished and the user is taken back to the AssistedNavigation screen.
+     */
 
     private fun navInit(){
         thread {
+            // Check if there are any locations in the path. If not, finish the activity and go back to AssistedNavigation screen
             if (Globals.path.isEmpty()) {
                 Thread.sleep(2000)
                 finish()
@@ -375,6 +450,7 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 startActivity(intent)
             }
 
+            // Check if the user is facing the correct direction. If not, prompt them to turn until their phone vibrates.
             if (!checkInitBear()) {
                 tts = TextToSpeech(this) {
                     if (it == TextToSpeech.SUCCESS) {
@@ -387,18 +463,15 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                         )
                     }
                 }
-
-//                Looper.prepare()
-//                Toast.makeText(this, "You are facing the wrong direction! Please turn until your phone vibrates", Toast.LENGTH_LONG).show()
-//                Looper.loop()
-
                 checkInitBear()
             }
 
             Thread.sleep(1500)
 
+            // Set the current location to the first location in the path
             currentLoc = Globals.path[0]
             println(currentLoc)
+            // Provide directions to the current location
             tts = TextToSpeech(this) {
                 if (it == TextToSpeech.SUCCESS) {
                     tts.setSpeechRate(0.95f)
@@ -411,14 +484,12 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-//            Looper.prepare()
-//            Toast.makeText(this, "You are now heading towards $currentLoc", Toast.LENGTH_LONG).show()
-//            Looper.loop()
-
             Thread.sleep(1500)
 
+            // Set the current direction to the first direction in the path
             currentDir = Globals.directions[0]
             println(currentDir)
+            // Provide directions on which direction to turn
             toSay = if (currentDir == "straight") {
                 "Please head straight towards "
             } else {
@@ -436,14 +507,16 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-//            Looper.prepare()
-//            Toast.makeText(this, "$toSay $currentLoc", Toast.LENGTH_LONG).show()
-//            Looper.loop()
-
+            // Set the current bearing to the first bearing in the path
             currentBearing = Globals.bearings[0]
             println(currentBearing)
         }.priority = Thread.MAX_PRIORITY
     }
+
+    /**
+     * Overrides the default behavior of the back button press to finish the activity and go back to AssistedNavigation screen.
+     * Also shuts down the TTS engine to prevent any lingering speech.
+     */
 
     override fun onBackPressed() {
         finish()
@@ -451,4 +524,5 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         tts.shutdown()
         startActivity(goBackHome)
     }
+    
 }
