@@ -45,11 +45,13 @@
 # :notebook_with_decorative_cover: Table of Contents
 
 - [About the Project](#star2-about-the-project)
+  * [Video DemonStration](#video-demo)
   * [Screenshots](#camera-screenshots)
   * [Tech Stack](#space_invader-tech-stack)
   * [Features](#dart-features)
 - [Roadmap](#compass-roadmap)
 - [Contact](#handshake-contact)  
+- [Acknowledgements](#gem-acknowledgements)
 
 <!-- About the Project -->
 ## :star2: About the Project
@@ -57,6 +59,9 @@ This project discusses the design and implementation of an enhanced indoor navig
 
 The mobile application can be operated in three different modes – regular navigation, assisted navigation, and free-roam mode. The current implementation
 of the application supports navigation at Level 1 of the School of Computer Science and Engineering (SCSE). BLE beacons are placed at important landmarks of this environment, and the user is provided with a list of destinations for navigation. User interaction, feedback, and the effectiveness of the proposed indoor navigation system have been evaluated in the report. Experimental results and observations indicate an improvement in indoor navigation with the introduction of VirtualEYE, the Android Mobile Application.
+
+### Video Demo
+Video Demonstration Link (to be added): [Video Link](to-be-added)
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -131,6 +136,7 @@ of the application supports navigation at Level 1 of the School of Computer Scie
 * [x] Work on Client Side code - Create navigation algorithm
 * [x] Set up Client-Server communication
 * [x] Test pipeline
+* [ ] TODO: Video Demonstration
 * [ ] TODO: Multi-floor navigation
 * [ ] TODO: AR-Navigation Feature
 * [ ] TODO: Proximity Estimation for Obstacles
@@ -139,7 +145,12 @@ of the application supports navigation at Level 1 of the School of Computer Scie
 <!-- Contact -->
 ## :handshake: Contact
 
-Aishwarya Singh - [@linkedin](https://www.linkedin.com/in/aishwarya-singh-547092174/)
+Aishwarya Singh - [Linkedin](https://www.linkedin.com/in/aishwarya-singh-547092174/)
 
 Project Link: [GitHub Repository](https://github.com/aish21/VirtualEYE-FYP)
 
+<!-- Acknowledgments -->
+## :gem: Acknowledgements
+
+The author would like to thank her advisor and mentor Dr. Smitha Kavallur Pisharath Gopi for her guidance and support throughout the entirety of the research.
+Her advice and constructive feedback were invaluable in shaping the direction and quality of the work presented in this report.
