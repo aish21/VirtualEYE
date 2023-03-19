@@ -18,5 +18,5 @@ object Globals {
     var startLocation: String? = null
     // A nullable string that represents the destination location for the navigation path.
     var destLocation: String? = null
-    
+
 }
