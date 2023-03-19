@@ -10,22 +10,22 @@
   
 <!-- Badges -->
 <p>
-  <a href="https://github.com/Louis3797/awesome-readme-template/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/Louis3797/awesome-readme-template" alt="contributors" />
+  <a href="https://github.com/aish21/VirtualEYE-FYP/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/aish21/VirtualEYE-FYP" alt="contributor" />
   </a>
   <a href="">
-    <img src="https://img.shields.io/github/last-commit/Louis3797/awesome-readme-template" alt="last update" />
+    <img src="https://img.shields.io/github/last-commit/aish21/VirtualEYE-FYP" alt="last commit" />
   </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/network/members">
-    <img src="https://img.shields.io/github/forks/Louis3797/awesome-readme-template" alt="forks" />
+  <a href="https://github.com/aish21/VirtualEYE-FYP/network/members">
+    <img src="https://img.shields.io/github/forks/aish21/VirtualEYE-FYP" alt="forks" />
   </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/stargazers">
-    <img src="https://img.shields.io/github/stars/Louis3797/awesome-readme-template" alt="stars" />
+  <a href="https://github.com/aish21/VirtualEYE-FYP/stargazers">
+    <img src="https://img.shields.io/github/stars/aish21/VirtualEYE-FYP" alt="stars" />
   </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/issues/">
-    <img src="https://img.shields.io/github/issues/Louis3797/awesome-readme-template" alt="open issues" />
+  <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">
+    <img src="https://img.shields.io/github/issues/aish21/VirtualEYE-FYP" alt="open issues" />
   </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/blob/master/LICENSE">
+  <a href="https://github.com/aish21/VirtualEYE-FYP/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/Louis3797/awesome-readme-template.svg" alt="license" />
   </a>
 </p>
