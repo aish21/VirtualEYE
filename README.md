@@ -26,18 +26,18 @@
     <img src="https://img.shields.io/github/issues/aish21/VirtualEYE-FYP" alt="open issues" />
   </a>
   <a href="https://github.com/aish21/VirtualEYE-FYP/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/Louis3797/awesome-readme-template.svg" alt="license" />
+    <img src="https://img.shields.io/github/license/aish21/VirtualEYE-FYP.svg" alt="license" />
   </a>
 </p>
    
 <h4>
-    <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
+    <a href="https://github.com/aish21/VirtualEYE-FYP/">View Demo</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template">Documentation</a>
+    <a href="https://github.com/aish21/VirtualEYE-FYP">Documentation</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">Report Bug</a>
+    <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Report Bugs</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">Request Feature</a>
+    <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Request Feature</a>
   </h4>
 </div>
 
@@ -77,7 +77,7 @@
 ### :camera: Screenshots
 
 <div align="center"> 
-  <img src="https://placehold.co/600x400?text=Your+Screenshot+here" alt="screenshot" />
+  <img src="README Assets/ss.jpeg" alt="screenshot" />
 </div>
 
 
