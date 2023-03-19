@@ -31,6 +31,8 @@
 </p>
    
 <h4>
+    <a href="FYP Reports/SINGH-AISHWARYA_U1923952C_SCSE22-0364.pdf">Documentation</a>
+  <span> · </span>
     <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Report Bugs</a>
   <span> · </span>
     <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Request Feature</a>
@@ -46,34 +48,20 @@
   * [Screenshots](#camera-screenshots)
   * [Tech Stack](#space_invader-tech-stack)
   * [Features](#dart-features)
-  * [Color Reference](#art-color-reference)
-  * [Environment Variables](#key-environment-variables)
-- [Getting Started](#toolbox-getting-started)
-  * [Prerequisites](#bangbang-prerequisites)
-  * [Installation](#gear-installation)
-  * [Running Tests](#test_tube-running-tests)
-  * [Run Locally](#running-run-locally)
-  * [Deployment](#triangular_flag_on_post-deployment)
-- [Usage](#eyes-usage)
 - [Roadmap](#compass-roadmap)
-- [Contributing](#wave-contributing)
-  * [Code of Conduct](#scroll-code-of-conduct)
-- [FAQ](#grey_question-faq)
-- [License](#warning-license)
-- [Contact](#handshake-contact)
-- [Acknowledgements](#gem-acknowledgements)
-
-  
+- [Contact](#handshake-contact)  
 
 <!-- About the Project -->
 ## :star2: About the Project
+This project discusses the design and implementation of an enhanced indoor navigation system to improve existing technology by aiding the visually impaired. Loss of vision can drastically impair an individual's sense of direction and mobility, especially in unfamiliar surroundings. Due to this, visually impaired individuals often find themselves needing further support and time to gain familiarity with new indoor settings. This report aims to present an enhanced indoor navigation system, customized to cater to the needs of the visually impaired. This has been achieved through the use of Bluetooth Low Energy (BLE) beacons, a BLE-supported Android device with in-built motion sensors, and an Android Mobile Application.
 
+The mobile application can be operated in three different modes – regular navigation, assisted navigation, and free-roam mode. The current implementation
+of the application supports navigation at Level 1 of the School of Computer Science and Engineering (SCSE). BLE beacons are placed at important landmarks of this environment, and the user is provided with a list of destinations for navigation. User interaction, feedback, and the effectiveness of the proposed indoor navigation system have been evaluated in the report. Experimental results and observations indicate an improvement in indoor navigation with the introduction of VirtualEYE, the Android Mobile Application.
 
 <!-- Screenshots -->
 ### :camera: Screenshots
 
 <div align="center"> 
-  ### :arrow_forward: HOME PAGE
   <img src="README Assets/ss.jpeg" alt="screenshot" />
   <img src="README Assets/ss2.jpeg" alt="screenshot" />
   <img src="README Assets/ss3.jpeg" alt="screenshot" />
@@ -112,13 +100,22 @@
 <!-- Features -->
 ### :dart: Features
 
-- Feature 1
-- Feature 2
-- Feature 3
-
-
-<!-- Getting Started -->
-## 	:toolbox: Getting Started
+- Receive Instructions/Commands from the user via:
+  * User Interface (UI) input
+  * Kinetic input
+  * Voice input
+- Interact with the BLE beacons placed around the test area to:
+  * Retrieve the landmark in the closest proximity to the user
+  * Calculate the distance between the user and the retrieved landmark
+- Perform obstacle detection to:
+  * Warn the user under assisted navigation of obstacles in the path
+- Provide Tactile and Audio feedback for the visually impaired users:
+  * Vibrate the phone to indicate the correct direction during navigation
+  * Give audio warnings and instructions using Text-To-Speech (TTS) to provide easier interaction with the application
+- Display an interactable map of the test area for visual navigation:
+  * Present a list of available locations the user can select and navigate to
+  * Update the map with markers of selected locations and the path calculated
+  * Provide written directions for navigation
 
 <!-- Roadmap -->
 ## :compass: Roadmap
