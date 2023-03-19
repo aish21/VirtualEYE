@@ -63,5 +63,5 @@ class Draw(context: Context?, var rect: Rect, var text: String) : View(context) 
         canvas?.drawText(text, textX, rect.centerY().toFloat(), textPaint)
         canvas?.drawRect(rect.left.toFloat(), rect.top.toFloat(), rect.bottom.toFloat(), rect.right.toFloat(), boundaryPaint)
     }
-    
+
 }
