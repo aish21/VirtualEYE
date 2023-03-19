@@ -1,5 +1,6 @@
 package com.example.virtualeye
 
+// Required Imports
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -14,9 +15,25 @@ import android.widget.ImageButton
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
-    // variable init
+    /**
+     * The MainActivity class is the main entry point for the VirtualEYE app. It initializes the app's
+     * sensor manager, text-to-speech engine, and UI components, and provides functionality for
+     * navigating to other screens.
+     */
+
+    // Variable Initialization
+
+    // Sensor Manager for device sensors
     private lateinit var sensorManager: SensorManager
+    // Text-to-Speech Engine for spoken feedback
     private lateinit var tts: TextToSpeech
+
+    /**
+     * This method is called when the activity is first created. It initializes the app's UI,
+     * hides the action bar, and sets up the text-to-speech engine.
+     *
+     * @param savedInstanceState a Bundle object containing the activity's previously saved state.
+     */
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +43,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Hide Action Bar - For UI purpose
         supportActionBar?.hide()
 
+        // Initialize Text-to-Speech Engine
         tts = TextToSpeech(this) {
             if (it == TextToSpeech.SUCCESS) {
                 tts.setSpeechRate(0.85f)
@@ -38,7 +56,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
         }
 
-        // Init Sensor Manager
+        // Initialize Sensor Manager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         // Navigate to Regular Navigation Screen - button click
@@ -58,7 +76,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    // Sensor change functions
+    /**
+     * This method is called when the activity is resumed. It registers the app's accelerometer sensor
+     * listener with the sensor manager.
+     */
+
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this,
@@ -66,11 +88,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             SensorManager.SENSOR_DELAY_NORMAL)
     }
 
+    /**
+     * This method is called when the activity is paused. It unregisters the app's accelerometer sensor
+     * listener from the sensor manager.
+     */
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
     }
+
+    /**
+     * This method is called when the app's accelerometer sensor detects a change in acceleration.
+     * If the acceleration is greater than 2, it indicates that the phone has been shaken, and the
+     * app navigates to the assisted navigation screen.
+     *
+     * @param event the SensorEvent object containing the sensor's latest data.
+     */
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
@@ -91,6 +125,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    // Not needed - placeholder function
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Not needed - placeholder function
     }
