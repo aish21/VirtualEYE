@@ -77,7 +77,7 @@
 ### :camera: Screenshots
 
 <div align="center"> 
-  #### ▶️ HOME PAGE
+  ### :arrow_forward: HOME PAGE
   <img src="README Assets/ss.jpeg" alt="screenshot" />
   #### ▶️ REGULAR NAVIGATION
   <img src="README Assets/ss2.jpeg" alt="screenshot" />
