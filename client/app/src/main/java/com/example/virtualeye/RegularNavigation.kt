@@ -94,7 +94,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
 
         spinner_start.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
-            @SuppressLint("UseCompatLoadingForDrawables")
+            @SuppressLint("UseCompatLoadingForDrawables", "NewApi")
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 // Do something when an item is selected
                 selectedStart = parent.getItemAtPosition(position).toString()
@@ -127,7 +127,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-            @SuppressLint("UseCompatLoadingForDrawables")
+            @SuppressLint("UseCompatLoadingForDrawables", "NewApi")
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Do something when no item is selected
                 spinner_start.foreground = getDrawable(R.drawable.start_drp)
@@ -135,7 +135,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
         }
 
         spinner_dest.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            @SuppressLint("UseCompatLoadingForDrawables")
+            @SuppressLint("UseCompatLoadingForDrawables", "NewApi")
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 // Do something when an item is selected
                 selectedDest = parent.getItemAtPosition(position).toString()
@@ -168,7 +168,7 @@ class RegularNavigation : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-            @SuppressLint("UseCompatLoadingForDrawables")
+            @SuppressLint("UseCompatLoadingForDrawables", "NewApi")
             override fun onNothingSelected(parent: AdapterView<*>) {
                 // Do something when no item is selected
                 spinner_dest.foreground = getDrawable(R.drawable.dest_drp)

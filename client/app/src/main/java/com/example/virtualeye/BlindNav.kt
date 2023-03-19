@@ -524,5 +524,5 @@ class BlindNav : AppCompatActivity(), SensorEventListener {
         tts.shutdown()
         startActivity(goBackHome)
     }
-    
+
 }
