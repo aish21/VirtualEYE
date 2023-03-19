@@ -1,10 +1,10 @@
 <div align="center">
 
-  <img src="README Assets/eye.gif" alt="logo" width="200" height="auto" />
-  <h1>Awesome Readme Template</h1>
+  <img src="README Assets/eye.gif" alt="logo" width="auto" height="auto" />
+  <h1>VirtualEYE</h1>
   
   <p>
-    An awesome README template for your projects! 
+    HELPING THE VISUALLY IMPAIRED MAP THE REAL WORLD 
   </p>
   
   
