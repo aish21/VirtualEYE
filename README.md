@@ -31,10 +31,6 @@
 </p>
    
 <h4>
-    <a href="https://github.com/aish21/VirtualEYE-FYP/">View Demo</a>
-  <span> · </span>
-    <a href="https://github.com/aish21/VirtualEYE-FYP">Documentation</a>
-  <span> · </span>
     <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Report Bugs</a>
   <span> · </span>
     <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">Request Feature</a>
@@ -79,47 +75,37 @@
 <div align="center"> 
   ### :arrow_forward: HOME PAGE
   <img src="README Assets/ss.jpeg" alt="screenshot" />
-  #### ▶️ REGULAR NAVIGATION
   <img src="README Assets/ss2.jpeg" alt="screenshot" />
-  #### ▶️ REGULAR NAVIGATION: Select Locations
   <img src="README Assets/ss3.jpeg" alt="screenshot" />
-  #### ▶️ REGULAR NAVIGATION: Navigate User
   <img src="README Assets/ss4.jpeg" alt="screenshot" />
-  #### ▶️ FREE ROAM MODE: Object Detection
   <img src="README Assets/ss5.jpeg" alt="screenshot" />
-  #### ▶️ FREE ROAM MODE: Object Detection
   <img src="README Assets/ss6.jpeg" alt="screenshot" />
-  #### ▶️ ASSISTED NAVIGATION: Voice Input of Locations
   <img src="README Assets/ss7.jpeg" alt="screenshot" />
-  #### ▶️ ASSISTED NAVIGATION: Navigate the visually impaired user
   <img src="README Assets/ss8.jpeg" alt="screenshot" />
 </div>
 
 
 <!-- TechStack -->
-### :space_invader: Tech Stack
+### :space_invader: Tech Stack and Tools
 
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://www.typescriptlang.org/">Android Studio</a></li>
-    <li><a href="https://nextjs.org/">TensorFlow Lite</a></li>
-    <li><a href="https://reactjs.org/">Firebase ML Kit</a></li>
-    <li><a href="https://tailwindcss.com/">SketchFab</a></li>
+    <li><a href="https://developer.android.com/">Android Studio</a></li>
+    <li><a href="https://www.tensorflow.org/lite/">TensorFlow Lite</a></li>
+    <li><a href="https://firebase.google.com/docs/ml-kit/">Firebase ML Kit</a></li>
+    <li><a href="https://sketchfab.com/">SketchFab</a></li>
   </ul>
 </details>
 
 <details>
   <summary>Server</summary>
   <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-    <li><a href="https://go.dev/">Golang</a></li>
-    <li><a href="https://nestjs.com/">Nest.js</a></li>
-    <li><a href="https://socket.io/">SocketIO</a></li>
-    <li><a href="https://www.prisma.io/">Prisma</a></li>    
-    <li><a href="https://www.apollographql.com/">Apollo</a></li>
-    <li><a href="https://graphql.org/">GraphQL</a></li>
+    <li><a href="https://code.visualstudio.com/">Visual Studio</a></li>
+    <li><a href="https://www.docker.com/">Docker</a></li>
+    <li><a href="https://azure.microsoft.com/en-us/">Azure Cloud</a></li>
+    <li><a href="https://www.python.org/">Python</a></li>
+    <li><a href="https://flask.palletsprojects.com/en/2.2.x//">Flask</a></li>
   </ul>
 </details>
 
@@ -137,60 +123,26 @@
 <!-- Roadmap -->
 ## :compass: Roadmap
 
-* [x] Todo 1
-* [ ] Todo 2
-
-
-<!-- Contributing -->
-## :wave: Contributing
-
-<a href="https://github.com/Louis3797/awesome-readme-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Louis3797/awesome-readme-template" />
-</a>
-
-
-Contributions are always welcome!
-
-See `contributing.md` for ways to get started.
-
-
-<!-- Code of Conduct -->
-### :scroll: Code of Conduct
-
-Please read the [Code of Conduct](https://github.com/Louis3797/awesome-readme-template/blob/master/CODE_OF_CONDUCT.md)
-
-<!-- FAQ -->
-## :grey_question: FAQ
-
-- Question 1
-
-  + Answer 1
-
-- Question 2
-
-  + Answer 2
-
-
-<!-- License -->
-## :warning: License
-
-Distributed under the no License. See LICENSE.txt for more information.
+* [x] Work on Server Side code - Shortest Path calculation
+* [x] Work on Server Side code - Create Docker Image
+* [x] Work on Server Side code - Push server to cloud
+* [x] Work on Client Side code - Create Indoor Map
+* [x] Work on Client Side code - Test BLE Connections
+* [x] Work on Client Side code - Create proximity estimation algorithm
+* [x] Work on Client Side code - Work on Obstacle Detection
+* [x] Work on Client Side code - Create voice input and recognition
+* [x] Work on Client Side code - Create navigation algorithm
+* [x] Set up Client-Server communication
+* [x] Test pipeline
+* [ ] TODO: Multi-floor navigation
+* [ ] TODO: AR-Navigation Feature
+* [ ] TODO: Proximity Estimation for Obstacles
 
 
 <!-- Contact -->
 ## :handshake: Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Aishwarya Singh - [@linkedin](https://www.linkedin.com/in/aishwarya-singh-547092174/)
 
-Project Link: [https://github.com/Louis3797/awesome-readme-template](https://github.com/Louis3797/awesome-readme-template)
+Project Link: [GitHub Repository](https://github.com/aish21/VirtualEYE-FYP)
 
-
-<!-- Acknowledgments -->
-## :gem: Acknowledgements
-
-Use this section to mention useful resources and libraries that you have used in your projects.
-
- - [Shields.io](https://shields.io/)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#travel--places)
- - [Readme Template](https://github.com/othneildrew/Best-README-Template)
