@@ -19,13 +19,13 @@
   <a href="https://github.com/aish21/VirtualEYE-FYP/network/members">
     <img src="https://img.shields.io/github/forks/aish21/VirtualEYE-FYP" alt="forks" />
   </a>
-  <a href="https://github.com/aish21/VirtualEYE-FYP/stargazers">
+  <a href="https://github.com/aish21/VirtualEYE-FYP/stargazers/">
     <img src="https://img.shields.io/github/stars/aish21/VirtualEYE-FYP" alt="stars" />
   </a>
   <a href="https://github.com/aish21/VirtualEYE-FYP/issues/">
     <img src="https://img.shields.io/github/issues/aish21/VirtualEYE-FYP" alt="open issues" />
   </a>
-  <a href="https://github.com/aish21/VirtualEYE-FYP/blob/master/LICENSE.md">
+  <a href="https://github.com/aish21/VirtualEYE-FYP/blob/master/LICENSE/">
     <img src="https://img.shields.io/github/license/aish21/VirtualEYE-FYP.svg" alt="license" />
   </a>
 </p>
