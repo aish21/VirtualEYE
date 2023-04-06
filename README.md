@@ -61,7 +61,7 @@ The mobile application can be operated in three different modes – regular navi
 of the application supports navigation at Level 1 of the School of Computer Science and Engineering (SCSE). BLE beacons are placed at important landmarks of this environment, and the user is provided with a list of destinations for navigation. User interaction, feedback, and the effectiveness of the proposed indoor navigation system have been evaluated in the report. Experimental results and observations indicate an improvement in indoor navigation with the introduction of VirtualEYE, the Android Mobile Application.
 
 ### 📹 Video Demo
-Video Demonstration Link (to be added): [Video Link](to-be-added)
+Video Demonstration Link: [Video Link](https://youtu.be/6d57YgNWh-w)
 
 <!-- Screenshots -->
 ### :camera: Screenshots
